@@ -5,9 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import team.starworld.shark.SharkBotApplication;
-import team.starworld.shark.event.Event;
 import team.starworld.shark.event.application.plugin.PluginLoadEvent;
-import team.starworld.shark.event.bus.EventBus;
 
 import java.io.File;
 import java.net.URL;
@@ -28,10 +26,9 @@ public class JarPlugin {
         this.file = file;
     }
 
-    @SuppressWarnings({"unchecked"})
     @SneakyThrows
     public void load (PluginLoadEvent event) {
-        ((EventBus <Event>) event.getEventBus()).emit(event);
+        event.getEventBus().emit(event);
         this.loader = new URLClassLoader(new URL[] {getURL()}, SharkBotApplication.class.getClassLoader());
         this.mainClass = loader.loadClass(getConfig().getMainClassName());
         if (mainClass.isAnnotationPresent(Plugin.class))

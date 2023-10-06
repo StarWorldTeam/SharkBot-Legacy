@@ -8,13 +8,13 @@ import team.starworld.shark.event.Event;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class EventBus <E extends Event> {
+public class EventBus {
 
-    public static final List <EventBus <?>> INSTANCES = new ArrayList <> ();
+    public static final List <EventBus> INSTANCES = new ArrayList <> ();
 
     private final @Getter Map <Class <?>, List <EventCallback <?>>> listeners = new HashMap <> ();
     private final @Getter Map <Class <?>, List <EventCallback <?>>> onceListeners = new HashMap <> ();
-    private final @Getter List <EventCallback <E>> allListeners = new ArrayList <> ();
+    private final @Getter List <EventCallback <?>> allListeners = new ArrayList <> ();
 
     @Getter @Setter
     private String name = "EventBus";
@@ -30,40 +30,40 @@ public class EventBus <E extends Event> {
 
     @SuppressWarnings("DuplicatedCode")
     @SneakyThrows
-    public <T extends E> EventCallback <T> on (Class <T> type, EventCallback <T> callback) {
+    public <T extends Event> EventCallback <T> on (Class <T> type, EventCallback <T> callback) {
         if (!listeners.containsKey(type)) listeners.put(type, new ArrayList <> ());
         listeners.get(type).add(callback);
         return callback;
     }
 
-    public <T extends E> EventCallback <T> on (Class <T> type, Consumer <T> callback) {
+    public <T extends Event> EventCallback <T> on (Class <T> type, Consumer <T> callback) {
         return on(type, ((event, ignored) -> callback.accept(event)));
     }
 
     @SuppressWarnings("DuplicatedCode")
     @SneakyThrows
-    public <T extends E> EventCallback <T> once (Class <T> type, EventCallback <T> callback) {
+    public <T extends Event> EventCallback <T> once (Class <T> type, EventCallback <T> callback) {
         if (!onceListeners.containsKey(type)) onceListeners.put(type, new ArrayList <> ());
         onceListeners.get(type).add(callback);
         return callback;
     }
 
-    public <T extends E> EventCallback <T> once (Class <T> type, Consumer <T> callback) {
+    public <T extends Event> EventCallback <T> once (Class <T> type, Consumer <T> callback) {
         return once(type, (event, ignored) -> callback.accept(event));
     }
 
-    public EventCallback <E> all (EventCallback <E> callback) {
+    public EventCallback <? extends Event> all (EventCallback <? extends Event> callback) {
         this.allListeners.add(callback);
         return callback;
     }
 
-    public EventCallback <E> all (Consumer <E> callback) {
+    public EventCallback <? extends Event> all (Consumer <Event> callback) {
         return all((event, ignored) -> callback.accept(event));
     }
 
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    public <T extends E> void emit (T event) {
+    public <T extends Event> void emit (T event) {
         event.setEventBus(this);
         Class <Event> type = (Class <Event>) event.getClass();
         if (!listeners.containsKey(type)) listeners.put(type, new ArrayList <> ());
@@ -76,7 +76,7 @@ public class EventBus <E extends Event> {
             var call = (EventCallback <Event>) i;
             call.call(event, call);
         }
-        for (var i : allListeners) i.call(event, i);
+        for (var i : allListeners) ((EventCallback <Event>) i).call(event, (EventCallback <Event>) i);
         onceListeners.get(type).clear();
     }
 

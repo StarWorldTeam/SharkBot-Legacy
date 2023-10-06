@@ -39,8 +39,9 @@ public class DataUtil {
     @SneakyThrows
     public static File getDataFile (String name, String fileType) {
         var path = getDataPath().toFile();
-        path.mkdirs();
-        return Path.of(path.getPath(), name + "." + fileType).toFile();
+        var filePath = Path.of(path.getPath(), name + "." + fileType);
+        filePath.getParent().toFile().mkdirs();
+        return filePath.toFile();
     }
 
     @SneakyThrows

@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.data.resource.Locale;
-import team.starworld.shark.event.Event;
 import team.starworld.shark.event.bus.EventBus;
 import team.starworld.shark.event.network.CommandAutoCompleteEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
@@ -61,7 +60,7 @@ public class SharkClient {
     public final List <SharkCommand> commands = new ArrayList <> ();
     public final ClientConfig config;
 
-    public EventBus <Event> eventBus = new EventBus <> ("EventBus@SharkClient");
+    public EventBus eventBus = new EventBus ("EventBus@SharkClient");
 
     public SharkClient (ClientConfig config) {
         this.config = config;
@@ -94,7 +93,7 @@ public class SharkClient {
                 data.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.description".formatted(command.getNamespace(), command.getName()), command.getDescription()));
                 for (var option : data.getOptions()) {
                     option.setNameLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.name".formatted(command.getNamespace(), command.getName(), option.getName()), option.getName()));
-                    option.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.description".formatted(command.getNamespace(), command.getName(), option.getDescription()), option.getDescription()));
+                    option.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.description".formatted(command.getNamespace(), command.getName(), option.getName()), option.getDescription()));
                 }
             }
             discordCommands.add(data);

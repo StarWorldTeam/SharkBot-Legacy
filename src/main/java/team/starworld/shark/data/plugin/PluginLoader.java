@@ -3,7 +3,6 @@ package team.starworld.shark.data.plugin;
 import lombok.Data;
 import lombok.Getter;
 import team.starworld.shark.SharkBotApplication;
-import team.starworld.shark.event.Event;
 import team.starworld.shark.event.application.plugin.PluginLoadEvent;
 import team.starworld.shark.event.bus.EventBus;
 
@@ -17,16 +16,16 @@ public class PluginLoader {
     public static class PluginConfig {
 
         private String name;
+        private String mainClassName;
+
         private String description = "";
         private String version = "0.0.0";
-
-        private String mainClassName;
 
     }
 
     @Getter
     private final List <JarPlugin> plugins = new ArrayList <> ();
-    public final EventBus <Event> eventBus = new EventBus <> ("EventBus@PluginLoader");
+    public final EventBus eventBus = new EventBus ("EventBus@PluginLoader");
 
     public PluginLoader () {}
 

@@ -1,4 +1,10 @@
 {
     "locale.discord.locale_tag": "en-US",
-    "network.command.shark.panel.name": "panel"
+    "locale.name.zh_cn": "Chinese (Simplified)",
+    "locale.name.en_us": "English (US)",
+    "network.command.shark.locale.name": "locale",
+    "network.command.shark.locale.description": "Localized Language Options",
+    "network.command.shark.locale.option.locale.name": "locale",
+    "network.command.shark.locale.option.locale.description": "Locale Name",
+    "network.command.shark.locale.reply": "Successfully switched to language [%1$s] %2$s!"
 }

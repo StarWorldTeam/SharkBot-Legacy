@@ -10,7 +10,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ResourceUtils;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.registries.ResourceLocation;
-import team.starworld.shark.event.Event;
 import team.starworld.shark.event.application.resources.ResourceLoadEvent;
 import team.starworld.shark.event.bus.EventBus;
 
@@ -20,7 +19,7 @@ import java.util.*;
 
 public class ResourceLoader {
 
-    public final EventBus <Event> eventBus = new EventBus <> ("EventBus@ResourceLoader");
+    public final EventBus eventBus = new EventBus ("EventBus@ResourceLoader");
 
     public Map <String, Locale> locales = new HashMap <> ();
 

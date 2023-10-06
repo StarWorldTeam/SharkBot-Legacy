@@ -19,7 +19,7 @@ public abstract class Event {
     public @interface Property {}
 
     @Setter @Getter
-    private EventBus <?> eventBus;
+    private EventBus eventBus;
 
     public String getEventName () {
         return this.getClass().getSimpleName();

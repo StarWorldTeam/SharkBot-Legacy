@@ -23,6 +23,19 @@ public class Locale {
         return SharkBotApplication.RESOURCE_LOADER.locales.get(SharkBotApplication.CONFIG.getDefaultLanguage());
     }
 
+    public String getLocalizedName () {
+        return get("locale.name." + this.getName());
+    }
+
+    public String getName () {
+        return SharkBotApplication.RESOURCE_LOADER.locales
+            .entrySet()
+            .stream()
+            .filter(i -> i.getValue() == this)
+            .map(Map.Entry::getKey)
+            .toList().get(0);
+    }
+
     public static Locale fromDiscord (DiscordLocale locale) {
         for (var lang : SharkBotApplication.RESOURCE_LOADER.locales.values()) {
             if (Objects.equals(lang.getOrDefault("locale.discord.locale_tag", "unknown"), locale.getLocale()))
@@ -48,7 +61,7 @@ public class Locale {
     }
 
     public String format (String key, Object... parameters) {
-        return language.get(key).formatted(
+        return get(key).formatted(
             Arrays.stream(parameters).map(
                 i -> i instanceof DomContent content ? content.render() : i.toString()
             ).toArray()

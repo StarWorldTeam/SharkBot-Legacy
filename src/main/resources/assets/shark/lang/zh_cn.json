@@ -1,4 +1,10 @@
 {
     "locale.discord.locale_tag": "zh-CN",
-    "network.command.shark.panel.name": "面板"
+    "locale.name.zh_cn": "中文 (简体)",
+    "locale.name.en_us": "英文 (美国)",
+    "network.command.shark.locale.name": "本地化语言",
+    "network.command.shark.locale.description": "本地化语言选项",
+    "network.command.shark.locale.option.locale.name": "语言名称",
+    "network.command.shark.locale.option.locale.description": "本地化语言名称",
+    "network.command.shark.locale.reply": "成功切换到语言 [%1$s] %2$s！"
 }
