@@ -13,5 +13,9 @@ public class SharkResource {
     private final @Getter String path;
     private final @Getter ResourceLocation location;
 
+    @Override
+    public String toString () {
+        return "SharkResource [%s]".formatted(this.path);
+    }
 
 }

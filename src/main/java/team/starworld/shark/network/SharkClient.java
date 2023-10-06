@@ -3,6 +3,7 @@ package team.starworld.shark.network;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -40,10 +41,10 @@ public class SharkClient {
 
     public static Logger LOGGER = LoggerFactory.getLogger(SharkClient.class);
 
-    @Data @Getter
+    @Data @Getter @Setter
     public static class ClientConfig {
 
-        @Data @Getter
+        @Data @Getter @Setter
         public static class ProxyConfig {
 
             private boolean enabled = false;
@@ -60,7 +61,7 @@ public class SharkClient {
     public final List <SharkCommand> commands = new ArrayList <> ();
     public final ClientConfig config;
 
-    public EventBus <Event> eventBus = new EventBus <> ();
+    public EventBus <Event> eventBus = new EventBus <> ("EventBus@SharkClient");
 
     public SharkClient (ClientConfig config) {
         this.config = config;

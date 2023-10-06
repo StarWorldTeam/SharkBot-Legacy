@@ -80,5 +80,6 @@ public class ResourceLocation {
     public String toString () {
         return "ResourceLocation [%s:%s]".formatted(this.namespace, this.path);
     }
+
 }
 

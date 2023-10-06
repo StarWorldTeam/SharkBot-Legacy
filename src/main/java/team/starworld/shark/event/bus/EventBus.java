@@ -1,6 +1,7 @@
 package team.starworld.shark.event.bus;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import team.starworld.shark.event.Event;
 
@@ -9,10 +10,23 @@ import java.util.function.Consumer;
 
 public class EventBus <E extends Event> {
 
+    public static final List <EventBus <?>> INSTANCES = new ArrayList <> ();
+
     private final @Getter Map <Class <?>, List <EventCallback <?>>> listeners = new HashMap <> ();
     private final @Getter Map <Class <?>, List <EventCallback <?>>> onceListeners = new HashMap <> ();
     private final @Getter List <EventCallback <E>> allListeners = new ArrayList <> ();
 
+    @Getter @Setter
+    private String name = "EventBus";
+
+    public EventBus () {
+        INSTANCES.add(this);
+    }
+
+    public EventBus (String name) {
+        INSTANCES.add(this);
+        this.name = name;
+    }
 
     @SuppressWarnings("DuplicatedCode")
     @SneakyThrows
@@ -51,7 +65,7 @@ public class EventBus <E extends Event> {
     @SneakyThrows
     public <T extends E> void emit (T event) {
         event.setEventBus(this);
-        Class<Event> type = (Class <Event>) event.getClass();
+        Class <Event> type = (Class <Event>) event.getClass();
         if (!listeners.containsKey(type)) listeners.put(type, new ArrayList <> ());
         if (!onceListeners.containsKey(type)) onceListeners.put(type, new ArrayList <> ());
         for (var i : listeners.get(type)) {
