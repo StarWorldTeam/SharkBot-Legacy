@@ -12,23 +12,23 @@ public class ResourceLocation {
     protected final @Getter String namespace;
     protected final @Getter String path;
 
-    private static boolean isValidPath (String path) {
+    public static boolean isValidPath (String path) {
         for (char i : path.toCharArray())
-            if (!validPathChar(i)) return false;
+            if (!validPathCharacter(i)) return false;
         return true;
     }
 
-    private static boolean isValidNamespace (String namespace) {
+    public static boolean isValidNamespace (String namespace) {
         for (char i : namespace.toCharArray())
-            if (!validNamespaceChar(i)) return false;
+            if (!validNamespaceCharacter(i)) return false;
         return true;
     }
 
-    private static boolean validPathChar (char character) {
+    public static boolean validPathCharacter (char character) {
         return character == '.' || character == '_' || character >= 'a' && character <= 'z' || character >= '0' && character <= '9' || character == '/';
     }
 
-    private static boolean validNamespaceChar (char character) {
+    public static boolean validNamespaceCharacter (char character) {
         return character == '_'|| character >= 'a' && character <= 'z' || character >= '0' && character <= '9';
     }
 

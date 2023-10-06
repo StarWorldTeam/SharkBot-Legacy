@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import team.starworld.shark.SharkBotApplication;
+import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.event.application.plugin.PluginLoadEvent;
 
 import java.io.File;
@@ -22,6 +23,9 @@ public class JarPlugin {
     private Object instance;
     private URLClassLoader loader;
 
+    @Getter
+    private boolean loaded = true;
+
     public JarPlugin (File file) {
         this.file = file;
     }
@@ -29,10 +33,17 @@ public class JarPlugin {
     @SneakyThrows
     public void load (PluginLoadEvent event) {
         event.getEventBus().emit(event);
+        if (!ResourceLocation.isValidNamespace(this.getConfig().getId())) return;
         this.loader = new URLClassLoader(new URL[] {getURL()}, SharkBotApplication.class.getClassLoader());
         this.mainClass = loader.loadClass(getConfig().getMainClassName());
-        if (mainClass.isAnnotationPresent(Plugin.class))
+        if (mainClass.isAnnotationPresent(Plugin.class)) {
             this.instance = mainClass.getConstructor(PluginLoadEvent.class).newInstance(event);
+            this.loaded = true;
+        }
+    }
+
+    public String getPluginId () {
+        return this.getConfig().getId();
     }
 
     @SneakyThrows

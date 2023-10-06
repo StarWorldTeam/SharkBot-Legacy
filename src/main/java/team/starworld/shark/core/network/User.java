@@ -8,6 +8,7 @@ import team.starworld.shark.data.resource.Locale;
 import team.starworld.shark.util.DataUtil;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class User {
@@ -72,5 +73,43 @@ public class User {
         this.getData().set(data);
         return this;
     }
+
+    public Map <String, Object> getTag () { return this.getData().get().getTag(); }
+    public User setTag (Map <String, Object> tag) {
+        var data = this.getData().get();
+        data.setTag(tag);
+        this.getData().set(data);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getTag (String name) { return (T) getTag().get(name); }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getTag (String name, T defaultValue) {
+        var value = getTag().get(name);
+        if (value == null) {
+            setTag(name, defaultValue); return defaultValue;
+        }
+        if (defaultValue.getClass().isInstance(value)) {
+            return (T) value;
+        } else {
+            setTag(name, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    public <K, V> LinkedHashMap <K, V> getTagAsMap (String name) { return getTag(name); }
+    public <T> User setTagAsMap (String name, Map <String, T> map) { return setTag(name, map); }
+
+    public User setTag (String name, Object object) {
+        var tag = new HashMap <> (this.getTag());
+        tag.put(name, object);
+        setTag(tag);
+        return this;
+    }
+
+    public boolean hasTag (String name) { return getTag().containsKey(name); }
+
 
 }
