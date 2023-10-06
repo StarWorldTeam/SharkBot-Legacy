@@ -3,7 +3,6 @@ package team.starworld.bot.commands;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.api.annotation.command.Command;
-import team.starworld.shark.event.network.CommandAutoCompleteEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
 import team.starworld.shark.event.network.data.CommandBeforeRegisterEvent;
 import team.starworld.shark.network.chat.Component;
@@ -16,7 +15,17 @@ public class Locale {
     public static void run (CommandInteractionEvent event) {
         var option = event.getInteraction().getOption("locale");
         if (option != null) {
-            var locale = SharkBotApplication.RESOURCE_LOADER.locales.get(option.getAsString());
+            var optionString = option.getAsString().trim();
+            if (!SharkBotApplication.RESOURCE_LOADER.locales.containsKey(optionString)) {
+                event.reply(
+                    Component.translatable(
+                        "network.command.shark.locale.reply.invalid",
+                        String.join(", ", SharkBotApplication.RESOURCE_LOADER.locales.keySet())
+                    )
+                ).queue();
+                return;
+            }
+            var locale = SharkBotApplication.RESOURCE_LOADER.locales.get(optionString);
             event.getUser().setLocale(locale);
             event.reply(Component.translatable("network.command.shark.locale.reply", locale.getName(), locale.getLocalizedName())).queue();
         } else {
@@ -27,14 +36,8 @@ public class Locale {
 
     @Command.BeforeRegister
     public static void beforeRegister (CommandBeforeRegisterEvent event) {
-        event.getEventBus().on(
-            CommandAutoCompleteEvent.class,
-            autoComplete -> SharkBotApplication.RESOURCE_LOADER.locales.keySet().forEach(
-                i -> autoComplete.add(i, i)
-            )
-        );
         event.getCommandData()
-            .addOption(OptionType.STRING, "locale", Constants.UNDEFINED, false, true);
+            .addOption(OptionType.STRING, "locale", Constants.UNDEFINED, false, false);
     }
 
 }

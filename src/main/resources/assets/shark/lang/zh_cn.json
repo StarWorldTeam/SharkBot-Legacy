@@ -6,5 +6,6 @@
     "network.command.shark.locale.description": "本地化语言选项",
     "network.command.shark.locale.option.locale.name": "语言名称",
     "network.command.shark.locale.option.locale.description": "本地化语言名称",
-    "network.command.shark.locale.reply": "成功切换到语言 [%1$s] %2$s！"
+    "network.command.shark.locale.reply": "成功切换到语言 [%1$s] %2$s！",
+    "network.command.shark.locale.reply.invalid": "无效语言，支持的语言有 [%s]。"
 }

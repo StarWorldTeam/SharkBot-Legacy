@@ -42,4 +42,8 @@ public class CommandAutoCompleteEvent extends DiscordEvent <CommandAutoCompleteI
         return this;
     }
 
+    public boolean isCommand (String name) {
+        return event.getFullCommandName().equals(name);
+    }
+
 }

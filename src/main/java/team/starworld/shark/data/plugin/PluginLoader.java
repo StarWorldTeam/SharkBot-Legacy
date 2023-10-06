@@ -16,6 +16,7 @@ public class PluginLoader {
     public static class PluginConfig {
 
         private String name;
+        private String id;
         private String mainClassName;
 
         private String description = "";
