@@ -1,9 +1,11 @@
 package team.starworld.shark.data.resource;
 
+import j2html.tags.DomContent;
 import lombok.Getter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import team.starworld.shark.SharkBotApplication;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +25,7 @@ public class Locale {
 
     public static Locale fromDiscord (DiscordLocale locale) {
         for (var lang : SharkBotApplication.RESOURCE_LOADER.locales.values()) {
-            if (Objects.equals(lang.get("locale.discord.locale_tag"), locale.getLocale()))
+            if (Objects.equals(lang.getOrDefault("locale.discord.locale_tag", "unknown"), locale.getLocale()))
                 return lang;
         }
         return getDefault();
@@ -38,15 +40,19 @@ public class Locale {
     }
 
     public String get (String key) {
-        return language.getOrDefault(key, key);
+        return language.getOrDefault(key, getDefault().getOrDefault(key, key));
     }
 
     public String getOrDefault (String key, String defaultValue) {
         return language.getOrDefault(key, defaultValue);
     }
 
-    public String format (String key, Object... arguments) {
-        return language.get(key).formatted(arguments);
+    public String format (String key, Object... parameters) {
+        return language.get(key).formatted(
+            Arrays.stream(parameters).map(
+                i -> i instanceof DomContent content ? content.render() : i.toString()
+            ).toArray()
+        );
     }
 
 }

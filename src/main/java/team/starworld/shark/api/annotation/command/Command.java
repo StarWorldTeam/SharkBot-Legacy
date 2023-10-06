@@ -1,4 +1,4 @@
-package team.starworld.shark.annotation.command;
+package team.starworld.shark.api.annotation.command;
 
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.util.Constants;

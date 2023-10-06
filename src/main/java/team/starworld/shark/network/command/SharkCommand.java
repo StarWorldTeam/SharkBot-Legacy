@@ -1,7 +1,7 @@
 package team.starworld.shark.network.command;
 
 import lombok.SneakyThrows;
-import team.starworld.shark.annotation.command.Command;
+import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.event.network.data.CommandBeforeRegisterEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
 

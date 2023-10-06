@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import team.starworld.shark.annotation.command.Command;
+import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.data.resource.Locale;
 import team.starworld.shark.event.Event;
 import team.starworld.shark.event.bus.EventBus;
