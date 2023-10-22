@@ -19,7 +19,7 @@ public class Locale {
                 body(
                     h1("Locales")
                 )
-            ).withStyle("width: 10rem;").attr("height", "100")
+            ).withStyle("width: 10rem;").attr("height", 100).attr("width", 100)
         ).queue();
     }
 
