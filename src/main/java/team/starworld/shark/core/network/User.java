@@ -25,11 +25,11 @@ public class User {
     private User (String id) {
         this.id = id;
         USERS.put(id, this);
+        this.data = DataUtil.useData("users/" + id, UserMeta.class, UserMeta::new, DataUtil.FileType.YAML);
         load();
     }
 
-    private User load () {
-        this.data = DataUtil.useData("users/" + id, UserMeta.class, UserMeta::new, DataUtil.FileType.YAML);
+    public User load () {
         this.tag.load(data.get().getTag());
         return this;
     }

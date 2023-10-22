@@ -6,6 +6,7 @@ import de.undercouch.bson4jackson.BsonFactory;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,16 @@ public class ListTag extends ArrayList <Object> {
                 toList().stream().map(String::valueOf).toList()
             )
         );
+    }
+
+    @Override
+    public boolean equals (Object obj) {
+        return obj instanceof ListTag && hashCode() == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode () {
+        return Arrays.hashCode(this.save());
     }
 
 }
