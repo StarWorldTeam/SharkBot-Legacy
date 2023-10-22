@@ -34,7 +34,9 @@ public class ResourceLoader {
     }
 
     public void load () {
-        load("classpath:assets/*/*/**/*.*", "classpath:assets");
+        try {
+            load("classpath:assets/*/*/**/*.*", "classpath:assets");
+        } catch (Throwable ignored) {}
         try {
             var plugins = SharkBotApplication.PLUGIN_LOADER.getPlugins();
             for (var plugin : plugins) {
@@ -66,53 +68,64 @@ public class ResourceLoader {
     }
 
     @SneakyThrows
+    public void loadURLResource (UrlResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
+        var realPath = splitPath(resource.getURI().toString().substring(baseDir.length()));
+        if (realPath.size() >= 2) {
+            var location = ResourceLocation.of(realPath.get(0), realPath.get(1));
+            var resourcePath = realPath.subList(2, realPath.size());
+            var resourceLocation = ResourceLocation.of(realPath.get(0), realPath.get(1) + "/" + String.join("/", resourcePath));
+            var split = Arrays.stream(baseDir.split("!/")).toList();
+            var sharkResource = new SharkResource(
+                resource, String.join("!/", split.subList(1, split.size())), String.join("/", resourcePath), resourceLocation
+            );
+            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <>());
+            resourceMap.get(location).add(sharkResource);
+        }
+    }
+
+    @SneakyThrows
+    public void loadFileSystemResource (FileSystemResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
+        var list = splitPath(resource.getPath());
+        var baseDirPath = splitPath(ResourceUtils.getURL(baseDir).getPath());
+        list = list.subList(baseDirPath.size(), list.size());
+        if (list.size() >= 2) {
+            var location = ResourceLocation.of(list.get(0), list.get(1));
+            var resourcePath = String.join("/", list.subList(2, list.size()));
+            var sharkResource = new SharkResource(
+                resource, String.join("/", baseDirPath), resourcePath,
+                ResourceLocation.of(location.getNamespace(), String.join("/", splitPath(location.getPath() + "/" + resourcePath)))
+            );
+            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
+            resourceMap.get(location).add(sharkResource);
+        }
+    }
+
+    @SneakyThrows
+    public void loadClassPathResource (ClassPathResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
+        var baseDirFiles = Arrays.stream(new PathMatchingResourcePatternResolver().getResources("%s".formatted(baseDir))).toList();
+        if (baseDirFiles.size() == 0 || !(baseDirFiles.get(0) instanceof ClassPathResource baseDirFile)) return;
+        var resourceBaseDir = splitPath(baseDirFile.getPath());
+        var locationPath = splitPath(resource.getPath()).subList(resourceBaseDir.size(), splitPath(resource.getPath()).size());
+        if (locationPath.size() >= 2) {
+            var typeLocation = ResourceLocation.of(locationPath.get(0), locationPath.get(1));
+            var resourcePath = String.join("/", locationPath.subList(2, locationPath.size()));
+            var sharkResource = new SharkResource(
+                resource, String.join("/", resourceBaseDir), resourcePath,
+                ResourceLocation.of(typeLocation.getNamespace(), String.join("/", splitPath(resourcePath).subList(1, splitPath(resourcePath).size())))
+            );
+            if (!resourceMap.containsKey(typeLocation)) resourceMap.put(typeLocation, new ArrayList <> ());
+            resourceMap.get(typeLocation).add(sharkResource);
+        }
+    }
+
+    @SneakyThrows
     public void load (String path, String baseDir) {
         var urlList = new PathMatchingResourcePatternResolver().getResources(path);
         var resourceMap = new HashMap <ResourceLocation, List <SharkResource>> ();
         for (var i : urlList) {
-            if (i instanceof UrlResource fileUrl) {
-                var realPath = splitPath(fileUrl.getURI().toString().substring(baseDir.length()));
-                if (realPath.size() >= 2) {
-                    var location = ResourceLocation.of(realPath.get(0), realPath.get(1));
-                    var resourcePath = realPath.subList(2, realPath.size());
-                    var resourceLocation = ResourceLocation.of(realPath.get(0), realPath.get(1) + "/" + String.join("/", resourcePath));
-                    var split = Arrays.stream(baseDir.split("!/")).toList();
-                    var sharkResource = new SharkResource(
-                        i, String.join("!/", split.subList(1, split.size())), String.join("/", resourcePath), resourceLocation
-                    );
-                    if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
-                    resourceMap.get(location).add(sharkResource);
-                }
-            } else if (i instanceof FileSystemResource fileSystem) {
-                var list = splitPath(fileSystem.getPath());
-                var baseDirPath = splitPath(ResourceUtils.getURL(baseDir).getPath());
-                list = list.subList(baseDirPath.size(), list.size());
-                if (list.size() >= 2) {
-                    var location = ResourceLocation.of(list.get(0), list.get(1));
-                    var resourcePath = String.join("/", list.subList(2, list.size()));
-                    var sharkResource = new SharkResource(
-                        i, String.join("/", baseDirPath), resourcePath,
-                        ResourceLocation.of(location.getNamespace(), String.join("/", splitPath(location.getPath() + "/" + resourcePath)))
-                    );
-                    if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
-                    resourceMap.get(location).add(sharkResource);
-                }
-            } else if (i instanceof ClassPathResource resource) {
-                var baseDirFiles = Arrays.stream(new PathMatchingResourcePatternResolver().getResources("%s".formatted(baseDir))).toList();
-                if (baseDirFiles.size() == 0 || !(baseDirFiles.get(0) instanceof ClassPathResource baseDirFile)) continue;
-                var resourceBaseDir = splitPath(baseDirFile.getPath());
-                var locationPath = splitPath(resource.getPath()).subList(resourceBaseDir.size(), splitPath(resource.getPath()).size());
-                if (locationPath.size() >= 2) {
-                    var typeLocation = ResourceLocation.of(locationPath.get(0), locationPath.get(1));
-                    var resourcePath = String.join("/", locationPath);
-                    var sharkResource = new SharkResource(
-                        i, String.join("/", resourceBaseDir), resourcePath,
-                        ResourceLocation.of(typeLocation.getNamespace(), String.join("/", splitPath(resourcePath).subList(1, splitPath(resourcePath).size())))
-                    );
-                    if (!resourceMap.containsKey(typeLocation)) resourceMap.put(typeLocation, new ArrayList <> ());
-                    resourceMap.get(typeLocation).add(sharkResource);
-                }
-            }
+            if (i instanceof UrlResource resource) loadURLResource(resource, resourceMap, baseDir);
+            else if (i instanceof FileSystemResource resource) loadFileSystemResource(resource, resourceMap, baseDir);
+            else if (i instanceof ClassPathResource resource) loadClassPathResource(resource, resourceMap, baseDir);
         }
         resourceMap.forEach(this::loadResource);
     }

@@ -5,7 +5,9 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ScreenshotType;
 import j2html.tags.DomContent;
+import j2html.tags.specialized.HtmlTag;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.jsoup.Jsoup;
 
 public class PlayWrightUtil {
 
@@ -18,6 +20,13 @@ public class PlayWrightUtil {
         var screenshot = page.screenshot(new Page.ScreenshotOptions().setType(ScreenshotType.PNG));
         playwright.close();
         return screenshot;
+    }
+
+    public static byte[] makeScreenShot (HtmlTag content) {
+        var rendered = content.render();
+        var doc = Jsoup.parse(rendered);
+        System.out.println(doc.attr("height"));
+        return new byte[] {};
     }
 
     public static byte[] makeScreenShot (DomContent tag)  {

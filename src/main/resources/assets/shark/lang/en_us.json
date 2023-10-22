@@ -1,11 +1,12 @@
 {
     "locale.discord.locale_tag": "en-US",
-    "locale.name.zh_cn": "Chinese (Simplified)",
-    "locale.name.en_us": "English (US)",
+    "locale.name": "English (US)",
     "network.command.shark.locale.name": "locale",
     "network.command.shark.locale.description": "Localized Language Options",
     "network.command.shark.locale.option.locale.name": "locale",
     "network.command.shark.locale.option.locale.description": "Locale Name",
+    "network.command.shark.locale.option.list.name": "list",
+    "network.command.shark.locale.option.list.description": "List all languages",
     "network.command.shark.locale.reply": "Successfully switched to language [%1$s] %2$s!",
     "network.command.shark.locale.reply.invalid": "Invalid language, supported languages are [%s]."
 }

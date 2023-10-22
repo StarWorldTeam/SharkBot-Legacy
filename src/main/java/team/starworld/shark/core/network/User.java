@@ -5,28 +5,57 @@ import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.Interaction;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.data.resource.Locale;
+import team.starworld.shark.data.serialization.CompoundTag;
 import team.starworld.shark.util.DataUtil;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class User {
 
     public static final Map <String, User> USERS = new HashMap <> ();
 
     @Getter
+    private final CompoundTag tag = new CompoundTag();
+
+    @Getter
     private final String id;
 
     private User (String id) {
         this.id = id;
-        this.data = DataUtil.useData("users/" + id, UserMeta.class, UserMeta::new, DataUtil.FileType.YAML);
         USERS.put(id, this);
+        load();
+    }
+
+    private User load () {
+        this.data = DataUtil.useData("users/" + id, UserMeta.class, UserMeta::new, DataUtil.FileType.YAML);
+        this.tag.load(data.get().getTag());
+        return this;
+    }
+
+    public User modifyTag (Consumer <CompoundTag> consumer) {
+        consumer.accept(getTag());
+        return save();
+    }
+
+    public User modifyMeta (Consumer <UserMeta> consumer) {
+        var data = getData().get();
+        consumer.accept(data);
+        this.data.set(data);
+        return this;
+    }
+
+    public User save () {
+        var data = this.data.get();
+        data.setTag(getTag().saveAsMap());
+        this.data.set(data);
+        return this;
     }
 
     public static User of (String id) {
-        if (USERS.containsKey(id)) return USERS.get(id);
-        return new User(id);
+        if (USERS.containsKey(id)) return USERS.get(id).save();
+        return new User(id).save();
     }
 
     public static User of (net.dv8tion.jda.api.entities.User user) {
@@ -73,43 +102,5 @@ public class User {
         this.getData().set(data);
         return this;
     }
-
-    public Map <String, Object> getTag () { return this.getData().get().getTag(); }
-    public User setTag (Map <String, Object> tag) {
-        var data = this.getData().get();
-        data.setTag(tag);
-        this.getData().set(data);
-        return this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T getTag (String name) { return (T) getTag().get(name); }
-
-    @SuppressWarnings("unchecked")
-    public <T> T getTag (String name, T defaultValue) {
-        var value = getTag().get(name);
-        if (value == null) {
-            setTag(name, defaultValue); return defaultValue;
-        }
-        if (defaultValue.getClass().isInstance(value)) {
-            return (T) value;
-        } else {
-            setTag(name, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    public <K, V> LinkedHashMap <K, V> getTagAsMap (String name) { return getTag(name); }
-    public <T> User setTagAsMap (String name, Map <String, T> map) { return setTag(name, map); }
-
-    public User setTag (String name, Object object) {
-        var tag = new HashMap <> (this.getTag());
-        tag.put(name, object);
-        setTag(tag);
-        return this;
-    }
-
-    public boolean hasTag (String name) { return getTag().containsKey(name); }
-
 
 }

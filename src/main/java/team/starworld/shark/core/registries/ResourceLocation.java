@@ -2,8 +2,10 @@ package team.starworld.shark.core.registries;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ResourceLocation {
 
@@ -13,28 +15,24 @@ public class ResourceLocation {
     protected final @Getter String path;
 
     public static boolean isValidPath (String path) {
-        for (char i : path.toCharArray())
-            if (!validPathCharacter(i)) return false;
-        return true;
+        return path.chars().allMatch(i -> isPathCharacter((char) i));
     }
 
     public static boolean isValidNamespace (String namespace) {
-        for (char i : namespace.toCharArray())
-            if (!validNamespaceCharacter(i)) return false;
-        return true;
+        return namespace.chars().allMatch(i -> isNamespaceCharacter((char) i));
     }
 
-    public static boolean validPathCharacter (char character) {
+    public static boolean isPathCharacter (char character) {
         return character == '.' || character == '_' || character >= 'a' && character <= 'z' || character >= '0' && character <= '9' || character == '/';
     }
 
-    public static boolean validNamespaceCharacter (char character) {
+    public static boolean isNamespaceCharacter (char character) {
         return character == '_'|| character >= 'a' && character <= 'z' || character >= '0' && character <= '9';
     }
 
 
-    public static ResourceLocation of (@NotNull String namespace, @NotNull String path) {
-        return new ResourceLocation(namespace, path);
+    public static ResourceLocation of (@Nullable String namespace, @NotNull String path) {
+        return new ResourceLocation(Objects.requireNonNullElse(namespace, DEFAULT_NAMESPACE), path);
     }
 
     public static ResourceLocation of (@NotNull String location) {

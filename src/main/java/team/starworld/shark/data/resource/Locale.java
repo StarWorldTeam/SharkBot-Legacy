@@ -24,7 +24,7 @@ public class Locale {
     }
 
     public String getLocalizedName () {
-        return get("locale.name." + this.getName());
+        return get("locale.name");
     }
 
     public String getName () {
