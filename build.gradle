@@ -39,7 +39,5 @@ dependencies {
     implementation 'com.j2html:j2html:1.6.0'
     implementation 'org.jsoup:jsoup:1.15.3'
     implementation 'de.undercouch:bson4jackson:2.15.0'
-    implementation 'com.github.Cmyna.mnbt:api:alpha-1.0'
-    implementation 'com.github.Cmyna.mnbt:annotation:alpha-1.0'
 
 }
