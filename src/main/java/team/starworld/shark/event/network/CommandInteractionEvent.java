@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import team.starworld.shark.core.network.User;
+import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.util.PlayWrightUtil;
 
@@ -29,14 +29,14 @@ public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInt
 
     public ReplyCallbackAction reply (Component component) {
         return reply(
-            component.getString(User.of(interaction).getLocale(interaction.getUserLocale()))
+            component.getString(User.of(interaction).getLocale())
         );
     }
 
     public ReplyCallbackAction replyHTML (Component component) {
         return reply(
             new MessageCreateBuilder().setFiles(PlayWrightUtil.getDiscordImage(PlayWrightUtil.makeScreenShot(
-                component.getDomContent(User.of(interaction).getLocale(interaction.getUserLocale()))
+                component.getDomContent(User.of(interaction).getLocale())
             )))
         );
     }

@@ -18,7 +18,7 @@ public @interface Command {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @interface BeforeRegister {}
+    @interface Setup {}
 
     String namespace () default ResourceLocation.DEFAULT_NAMESPACE;
 

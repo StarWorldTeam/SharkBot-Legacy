@@ -4,16 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.undercouch.bson4jackson.BsonFactory;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ListTag extends ArrayList <Object> {
 
     public ListTag put (Object value) {
         add(value);
+        return this;
+    }
+
+    public ListTag putAll (Collection <?> value) {
+        value.forEach(this::put);
         return this;
     }
 
@@ -38,14 +41,13 @@ public class ListTag extends ArrayList <Object> {
         var mapper = new ObjectMapper(new BsonFactory());
         var value = mapper.readValue(bytes, new TypeReference <List <?>> () {});
         this.clear();
-        this.addAll(value);
+        if (value != null)
+            this.addAll(value);
         this.toList().clear();
         return this;
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    @Override
-    public Object get (int index) {
+    public Object getAndLoad (int index) {
         var value = super.get(index);
         if (!(value instanceof ListTag) && value instanceof List <?> list)
             set(index, new ListTag().load(list));
@@ -54,24 +56,26 @@ public class ListTag extends ArrayList <Object> {
         return super.get(index);
     }
 
+    public Object get (int index) { return getAndLoad(index); }
+
     @SneakyThrows
-    public ListTag load (List <?> list) {
+    public ListTag load (@NotNull List <?> list) {
         this.clear();
         this.addAll(list);
         this.toList().clear();
         return this;
     }
 
-    @SuppressWarnings("UseBulkOperation")
     public List <Object> toList () {
         var list = new ArrayList <> ();
-        for (var index = 0; index < size(); index ++) list.add(get(index));
+        for (var index = 0; index < size(); index ++)
+            list.add(getAndLoad(index));
         return list;
     }
 
     @Override
     public String toString () {
-        return "ListTag {%s}".formatted(
+        return "[%s]".formatted(
             String.join(
                 ", ",
                 toList().stream().map(String::valueOf).toList()

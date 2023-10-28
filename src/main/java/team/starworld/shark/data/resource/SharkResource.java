@@ -8,6 +8,8 @@ import team.starworld.shark.core.registries.ResourceLocation;
 @AllArgsConstructor
 public class SharkResource {
 
+
+    private final @Getter ResourceLocation type;
     private final @Getter Resource resource;
     private final @Getter String baseDirectory;
     private final @Getter String path;

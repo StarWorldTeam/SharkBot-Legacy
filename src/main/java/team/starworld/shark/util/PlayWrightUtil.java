@@ -22,7 +22,7 @@ public class PlayWrightUtil {
         var playwright = Playwright.create();
         Browser browser = playwright.webkit().launch();
         Page page = browser.newPage();
-        page.setViewportSize(Integer.parseInt(doc.attr("width")), Integer.parseInt(doc.attr("height")));
+        page.setViewportSize(Integer.parseInt(doc.attr("width").isEmpty() ? "100" : doc.attr("width")), Integer.parseInt(doc.attr("height").isEmpty() ? "100" : doc.attr("height")));
         page.navigate("about:blank");
         page.setContent(html);
         var screenshot = page.screenshot(new Page.ScreenshotOptions().setType(ScreenshotType.PNG));

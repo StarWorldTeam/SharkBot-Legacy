@@ -33,7 +33,7 @@ public class ResourceLoader {
         return "jar:file:/%s!/%s".formatted(jarFile.replaceAll("\\\\", "/"), String.join("/", files));
     }
 
-    public void load () {
+    public synchronized void load () {
         try {
             load("classpath:assets/*/*/**/*.*", "classpath:assets");
         } catch (Throwable ignored) {}
@@ -76,9 +76,10 @@ public class ResourceLoader {
             var resourceLocation = ResourceLocation.of(realPath.get(0), realPath.get(1) + "/" + String.join("/", resourcePath));
             var split = Arrays.stream(baseDir.split("!/")).toList();
             var sharkResource = new SharkResource(
+                location,
                 resource, String.join("!/", split.subList(1, split.size())), String.join("/", resourcePath), resourceLocation
             );
-            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <>());
+            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
             resourceMap.get(location).add(sharkResource);
         }
     }
@@ -92,6 +93,7 @@ public class ResourceLoader {
             var location = ResourceLocation.of(list.get(0), list.get(1));
             var resourcePath = String.join("/", list.subList(2, list.size()));
             var sharkResource = new SharkResource(
+                location,
                 resource, String.join("/", baseDirPath), resourcePath,
                 ResourceLocation.of(location.getNamespace(), String.join("/", splitPath(location.getPath() + "/" + resourcePath)))
             );
@@ -110,6 +112,7 @@ public class ResourceLoader {
             var typeLocation = ResourceLocation.of(locationPath.get(0), locationPath.get(1));
             var resourcePath = String.join("/", locationPath.subList(2, locationPath.size()));
             var sharkResource = new SharkResource(
+                typeLocation,
                 resource, String.join("/", resourceBaseDir), resourcePath,
                 ResourceLocation.of(typeLocation.getNamespace(), String.join("/", splitPath(resourcePath).subList(1, splitPath(resourcePath).size())))
             );

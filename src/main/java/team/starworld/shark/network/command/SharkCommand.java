@@ -2,7 +2,7 @@ package team.starworld.shark.network.command;
 
 import lombok.SneakyThrows;
 import team.starworld.shark.api.annotation.command.Command;
-import team.starworld.shark.event.network.data.CommandBeforeRegisterEvent;
+import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
 
 import java.util.Arrays;
@@ -31,8 +31,8 @@ public class SharkCommand {
     }
 
     @SneakyThrows
-    public void handleBeforeRegister (CommandBeforeRegisterEvent event) {
-        for (var method : Arrays.stream(clazz.getDeclaredMethods()).filter(i -> i.isAnnotationPresent(Command.BeforeRegister.class)).toList()) {
+    public void handleBeforeRegister (CommandSetupEvent event) {
+        for (var method : Arrays.stream(clazz.getDeclaredMethods()).filter(i -> i.isAnnotationPresent(Command.Setup.class)).toList()) {
             method.invoke(null, event);
         }
     }

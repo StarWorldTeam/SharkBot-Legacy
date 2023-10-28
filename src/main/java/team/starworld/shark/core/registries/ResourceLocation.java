@@ -74,9 +74,13 @@ public class ResourceLocation {
         return type + "." + this.toLanguageKey();
     }
 
+    public String toLanguageKey (String type, String attribute) {
+        return type + "." + this.toLanguageKey() + "." + attribute;
+    }
+
     @Override
     public String toString () {
-        return "ResourceLocation [%s:%s]".formatted(this.namespace, this.path);
+        return "%s:%s".formatted(this.namespace, this.path);
     }
 
 }

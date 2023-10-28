@@ -22,7 +22,7 @@ import team.starworld.shark.event.bus.EventBus;
 import team.starworld.shark.event.network.CommandAutoCompleteEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
 import team.starworld.shark.event.network.CommandListUpdateEvent;
-import team.starworld.shark.event.network.data.CommandBeforeRegisterEvent;
+import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.network.command.SharkCommand;
 import team.starworld.shark.util.AnnotationUtil;
 
@@ -83,7 +83,7 @@ public class SharkClient {
         var discordCommands = new ArrayList <> (event.getCommands());
         for (var command : commands) {
             var data = Commands.slash(command.getName(), command.getDescription());
-            var sharkEvent = new CommandBeforeRegisterEvent(command, data);
+            var sharkEvent = new CommandSetupEvent(command, data);
             eventBus.emit(sharkEvent);
             command.handleBeforeRegister(sharkEvent);
             for (var discordLocale : DiscordLocale.values()) {

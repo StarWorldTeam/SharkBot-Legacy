@@ -3,6 +3,7 @@ package team.starworld.shark;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -38,7 +39,11 @@ public class SharkBotApplication {
     public static ResourceLoader RESOURCE_LOADER = new ResourceLoader();
     public static PluginLoader PLUGIN_LOADER = new PluginLoader();
 
-    public static void main (String[] args) throws InterruptedException {
+    public static Thread BOT_THREAD = new Thread(SharkBotApplication::startBot, "Shark-Bot");
+    public static Thread BACKEND_THREAD = new Thread(SharkBotApplication::startBackend, "Shark-Backend");
+
+    @SneakyThrows
+    public static void main (String[] args) {
         SpringApplication.run(SharkBotApplication.class, args);
         CONFIG = ConfigUtil.useConfig("shark", Config.class, Config::new);
         SHARK_CLIENT = new SharkClient(CONFIG.clientConfig);
@@ -47,6 +52,12 @@ public class SharkBotApplication {
                 event -> SharkClient.LOGGER.info("[%s] [%s] %s".formatted(bus.getName(), event.getEventName(), event.getDisplayString()))
             )
         );
+        BACKEND_THREAD.start();
+        BOT_THREAD.start();
+    }
+
+    @SneakyThrows
+    public static void startBot () {
         PLUGIN_LOADER.load();
         PLUGIN_LOADER.loadPlugins();
         RESOURCE_LOADER.load();
@@ -54,6 +65,6 @@ public class SharkBotApplication {
         SHARK_CLIENT.getClient().awaitReady();
     }
 
-
+    public static void startBackend () {}
 
 }

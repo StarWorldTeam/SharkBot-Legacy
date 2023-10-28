@@ -28,6 +28,22 @@ public abstract class Component {
     }
 
     @NotNull
+    public static Component newLine () {
+        return new Component () {
+            @Override
+            public String getString () {
+                return "\n";
+            }
+
+            @Override
+            public DomContent getDomContent () {
+                return TagCreator.br();
+            }
+
+        };
+    }
+
+    @NotNull
     public static Component translatable (String key, Object... parameters) {
         return new Component () {
 
@@ -55,7 +71,7 @@ public abstract class Component {
     }
 
 
-    abstract String getString ();
+    public abstract String getString ();
 
     public String getString (Locale locale) { return getString(); }
 

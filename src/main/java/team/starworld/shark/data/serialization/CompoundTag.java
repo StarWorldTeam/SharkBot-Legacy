@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.undercouch.bson4jackson.BsonFactory;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class CompoundTag {
 
@@ -42,13 +44,13 @@ public class CompoundTag {
     @SneakyThrows
     public CompoundTag load (byte[] bytes) {
         var mapper = new ObjectMapper(new BsonFactory());
-        this.map = mapper.readValue(bytes, new TypeReference <> () {});
+        this.map = Objects.requireNonNullElse(mapper.readValue(bytes, new TypeReference <> () {}), this.map);
         this.entrySet();
         return this;
     }
 
     @SneakyThrows
-    public CompoundTag load (Map <?, ?> map) {
+    public CompoundTag load (@NotNull Map <?, ?> map) {
         this.map.clear();
         map.forEach((key, value) -> this.map.put(String.valueOf(key), value));
         this.entrySet();
@@ -61,6 +63,12 @@ public class CompoundTag {
     }
 
     public CompoundTag getCompound (String name) { return (CompoundTag) get(name); }
+
+    public CompoundTag putIfNull (String name, Supplier <Object> supplier) {
+        if (!this.map.containsKey(name) || this.map.get(name) == null)
+            put(name, supplier.get());
+        return this;
+    }
 
     public CompoundTag put (String name, Object value) {
         map.put(name, value);
@@ -132,12 +140,17 @@ public class CompoundTag {
     }
 
     public Set <Map.Entry <String, Object>> entrySet () {
+        this.map.forEach(
+            (key, value) -> {
+                if (value == null) this.map.remove(key);
+            }
+        );
         return Set.copyOf(this.map.keySet().stream().map(key -> Map.entry(key, get(key))).toList());
     }
 
     @Override
     public String toString () {
-        return "CompoundTag {%s}".formatted(
+        return "{%s}".formatted(
             String.join(
                 ", ",
                 entrySet()
@@ -146,6 +159,24 @@ public class CompoundTag {
                 .toList()
             )
         );
+    }
+
+    public CompoundTag remove (String name) {
+        map.remove(name);
+        return this;
+    }
+
+    public CompoundTag clear () {
+        map.clear();
+        return this;
+    }
+
+    public boolean containsKey (String key) {
+        return map.containsKey(key);
+    }
+
+    public boolean containsValue (String value) {
+        return map.containsValue(value);
     }
 
 }

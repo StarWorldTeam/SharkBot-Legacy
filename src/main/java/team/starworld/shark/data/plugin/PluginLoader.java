@@ -45,7 +45,7 @@ public class PluginLoader {
         }
     }
 
-    public void loadPlugins () {
+    public synchronized void loadPlugins () {
         this.plugins.forEach(
             plugin -> {
                 var event = new PluginLoadEvent(plugin, this);

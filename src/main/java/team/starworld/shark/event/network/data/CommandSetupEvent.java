@@ -14,22 +14,22 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 @Getter @AllArgsConstructor
-public class CommandBeforeRegisterEvent extends Event {
+public class CommandSetupEvent extends Event {
 
 
     private final @Event.Property SharkCommand command;
     private final @Event.Property SlashCommandData commandData;
 
-    public CommandBeforeRegisterEvent addOption (OptionType type, String name) {
+    public CommandSetupEvent addOption (OptionType type, String name) {
         return addOption(type, name, Constants.UNDEFINED);
     }
 
-    public CommandBeforeRegisterEvent addOption (OptionType type, String name, String description) {
+    public CommandSetupEvent addOption (OptionType type, String name, String description) {
         this.commandData.addOption(type, name, description);
         return this;
     }
 
-    public CommandBeforeRegisterEvent autoComplete (Consumer <CommandAutoCompleteEvent> callback, String... options) {
+    public CommandSetupEvent autoComplete (Consumer <CommandAutoCompleteEvent> callback, String... options) {
         getEventBus().on(
             CommandAutoCompleteEvent.class,
             event -> {
@@ -40,7 +40,7 @@ public class CommandBeforeRegisterEvent extends Event {
         return this;
     }
 
-    public CommandBeforeRegisterEvent autoComplete (EventCallback <CommandAutoCompleteEvent> callback, String... options) {
+    public CommandSetupEvent autoComplete (EventCallback <CommandAutoCompleteEvent> callback, String... options) {
         getEventBus().on(
             CommandAutoCompleteEvent.class,
             (event, eventCallback) -> {

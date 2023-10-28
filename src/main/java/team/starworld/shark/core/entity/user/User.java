@@ -1,4 +1,4 @@
-package team.starworld.shark.core.network;
+package team.starworld.shark.core.entity.user;
 
 import lombok.Getter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
@@ -7,7 +7,6 @@ import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.data.resource.Locale;
 import team.starworld.shark.data.serialization.CompoundTag;
 import team.starworld.shark.util.DataUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -22,6 +21,8 @@ public class User {
     @Getter
     private final String id;
 
+    @Getter private final Inventory inventory = new Inventory();
+
     private User (String id) {
         this.id = id;
         USERS.put(id, this);
@@ -31,6 +32,7 @@ public class User {
 
     public User load () {
         this.tag.load(data.get().getTag());
+        this.inventory.load(getTag().putIfNull("inventory", CompoundTag::new).getCompound("inventory"));
         return this;
     }
 
@@ -48,6 +50,7 @@ public class User {
 
     public User save () {
         var data = this.data.get();
+        tag.putCompound("inventory", inventory.save());
         data.setTag(getTag().saveAsMap());
         this.data.set(data);
         return this;
@@ -56,6 +59,10 @@ public class User {
     public static User of (String id) {
         if (USERS.containsKey(id)) return USERS.get(id).save();
         return new User(id).save();
+    }
+
+    public net.dv8tion.jda.api.entities.User toDiscord () {
+        return SharkBotApplication.SHARK_CLIENT.getClient().getUserById(this.id);
     }
 
     public static User of (net.dv8tion.jda.api.entities.User user) {
@@ -73,22 +80,6 @@ public class User {
         return SharkBotApplication.RESOURCE_LOADER.locales.get(this.getData().get().getLocale());
     }
 
-    public Locale getLocale (Locale defaultValue) {
-        var data = this.getData().get();
-        if (data.getLocale() == null) data.setLocale(defaultValue.getName());
-        var locale = data.getLocale();
-        this.getData().set(data);
-        return SharkBotApplication.RESOURCE_LOADER.locales.get(locale);
-    }
-
-    public Locale getLocale (DiscordLocale defaultValue) {
-        var data = this.getData().get();
-        if (data.getLocale() == null) data.setLocale(Locale.fromDiscord(defaultValue).getName());
-        var locale = data.getLocale();
-        this.getData().set(data);
-        return SharkBotApplication.RESOURCE_LOADER.locales.get(locale);
-    }
-
     public User setLocale (DiscordLocale locale) {
         var data = this.getData().get();
         data.setLocale(Locale.fromDiscord(locale).getName());
@@ -102,5 +93,6 @@ public class User {
         this.getData().set(data);
         return this;
     }
+
 
 }

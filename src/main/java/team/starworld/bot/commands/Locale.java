@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.event.network.CommandInteractionEvent;
-import team.starworld.shark.event.network.data.CommandBeforeRegisterEvent;
+import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.util.Constants;
 
@@ -43,13 +43,13 @@ public class Locale {
             event.getUser().setLocale(locale);
             event.reply(Component.translatable("network.command.shark.locale.reply", locale.getName(), locale.getLocalizedName())).queue();
         } else {
-            var locale = event.getUser().getLocale(event.getInteraction().getUserLocale());
+            var locale = event.getUser().getLocale();
             event.reply("[%s] %s".formatted(locale.getName(), locale.getLocalizedName())).queue();
         }
     }
 
-    @Command.BeforeRegister
-    public static void beforeRegister (CommandBeforeRegisterEvent event) {
+    @Command.Setup
+    public static void setup (CommandSetupEvent event) {
         event.getCommandData().addOption(OptionType.BOOLEAN, "list", Constants.UNDEFINED, false, false);
         event.getCommandData()
             .addOption(OptionType.STRING, "locale", Constants.UNDEFINED, false, false);
