@@ -17,28 +17,27 @@ public class JarPlugin {
 
     @Getter
     private final File file;
-
     private PluginLoader.PluginConfig config;
     private Class <?> mainClass;
     private Object instance;
     private URLClassLoader loader;
+    @Getter private PluginLoader pluginLoader;
+    @Getter private boolean loaded = true;
 
-    @Getter
-    private boolean loaded = true;
-
-    public JarPlugin (File file) {
+    public JarPlugin (File file, PluginLoader loader) {
         this.file = file;
     }
 
     @SneakyThrows
     public void load (PluginLoadEvent event) {
         event.getEventBus().emit(event);
+        if (event.isCancelled()) return;
         if (!ResourceLocation.isValidNamespace(this.getConfig().getId())) return;
-        this.loader = new URLClassLoader(new URL[] {getURL()}, SharkBotApplication.class.getClassLoader());
-        this.mainClass = loader.loadClass(getConfig().getMainClassName());
+        setLoader(new URLClassLoader(new URL[] {getURL()}, SharkBotApplication.class.getClassLoader()));
+        setMainClass(loader.loadClass(getConfig().getMainClassName()));
         if (mainClass.isAnnotationPresent(Plugin.class)) {
-            this.instance = mainClass.getConstructor(PluginLoadEvent.class).newInstance(event);
-            this.loaded = true;
+            setInstance(mainClass.getConstructor(PluginLoadEvent.class).newInstance(event));
+            setLoaded();
         }
     }
 
@@ -56,14 +55,30 @@ public class JarPlugin {
         return this.instance;
     }
 
+    public void setInstance (Object object) {
+        if (this.instance == null) this.instance = object;
+    }
+
     public URLClassLoader getLoader () {
         if (this.loader == null) throw new RuntimeException("Plugin not loaded yet.");
         return this.loader;
     }
 
+    public void setLoader (URLClassLoader loader) {
+        if (this.loader == null) this.loader = loader;
+    }
+
     public Class <?> getMainClass () {
         if (this.mainClass == null) throw new RuntimeException("Plugin not loaded yet.");
         return this.mainClass;
+    }
+
+    public void setMainClass (Class <?> clazz) {
+        if (this.mainClass == null) this.mainClass = clazz;
+    }
+
+    public void setLoaded () {
+        this.loaded = true;
     }
 
     public Plugin getAnnotation () {

@@ -28,11 +28,15 @@ public class PluginLoader {
     private final List <JarPlugin> plugins = new ArrayList <> ();
     public final EventBus eventBus = new EventBus ("EventBus@PluginLoader");
 
-    public PluginLoader () {}
+    private final String path;
 
-    public static Path getPluginPath () {
+    public PluginLoader (String path) {
+        this.path = path;
+    }
+
+    public Path getPluginPath () {
         return Path.of(
-            SharkBotApplication.getBaseDir().toString(), "plugins"
+            SharkBotApplication.getBaseDir().toString(), this.path
         );
     }
 
@@ -41,7 +45,7 @@ public class PluginLoader {
         var files = getPluginPath().toFile().listFiles();
         if (files != null) for (var i : files) {
             if (i.isFile() && i.getPath().endsWith(".jar"))
-                plugins.add(new JarPlugin(i));
+                plugins.add(new JarPlugin(i, this));
         }
     }
 
