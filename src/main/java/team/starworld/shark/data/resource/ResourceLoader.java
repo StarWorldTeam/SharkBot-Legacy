@@ -2,6 +2,7 @@ package team.starworld.shark.data.resource;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -10,7 +11,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ResourceUtils;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.registries.ResourceLocation;
+import team.starworld.shark.data.plugin.PluginLoader;
 import team.starworld.shark.event.application.resources.ResourceLoadEvent;
+import team.starworld.shark.event.application.resources.ResourceLoadFinishEvent;
 import team.starworld.shark.event.bus.EventBus;
 
 import java.net.URI;
@@ -33,16 +36,24 @@ public class ResourceLoader {
         return "jar:file:/%s!/%s".formatted(jarFile.replaceAll("\\\\", "/"), String.join("/", files));
     }
 
+    @Getter
+    private final PluginLoader[] pluginLoaders;
+
+    public ResourceLoader (PluginLoader[] pluginLoaders) {
+        this.pluginLoaders = pluginLoaders;
+    }
+
     public synchronized void load () {
         try {
             load("classpath:assets/*/*/**/*.*", "classpath:assets");
         } catch (Throwable ignored) {}
         try {
-            var plugins = SharkBotApplication.PLUGIN_LOADER.getPlugins();
-            for (var plugin : plugins) {
-                var baseDir = URI.create(getJarResource(plugin.getFile().getAbsolutePath(), "assets")).toString();
-                var path = baseDir + "/*/*/**/*.*";
-                load(path, baseDir);
+            for (var plugins : pluginLoaders) {
+                for (var plugin : plugins.getPlugins()) {
+                    var baseDir = URI.create(getJarResource(plugin.getFile().getAbsolutePath(), "assets")).toString();
+                    var path = baseDir + "/*/*/**/*.*";
+                    load(path, baseDir);
+                }
             }
         } catch (Throwable ignored) {}
         try {
@@ -57,6 +68,7 @@ public class ResourceLoader {
                 } catch (Throwable ignored) {}
             }
         } catch (Throwable ignored) {}
+        eventBus.emit(new ResourceLoadFinishEvent(this));
     }
 
     public static List <String> splitPath (String path) {
@@ -145,7 +157,7 @@ public class ResourceLoader {
                 value.forEach(locales.get(name)::put);
             }
         }
-        eventBus.emit(new ResourceLoadEvent(location, resources));
+        eventBus.emit(new ResourceLoadEvent(location, resources, this));
     }
 
 }

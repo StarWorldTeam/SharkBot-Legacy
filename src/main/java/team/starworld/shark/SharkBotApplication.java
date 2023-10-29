@@ -36,9 +36,9 @@ public class SharkBotApplication {
 
     public static Config CONFIG;
     public static SharkClient SHARK_CLIENT;
-    public static ResourceLoader RESOURCE_LOADER = new ResourceLoader();
     public static PluginLoader CORE_PLUGIN_LOADER = new PluginLoader("corePlugins");
     public static PluginLoader PLUGIN_LOADER = new PluginLoader("plugins");
+    public static ResourceLoader RESOURCE_LOADER = new ResourceLoader(new PluginLoader[] { CORE_PLUGIN_LOADER, PLUGIN_LOADER });
 
     public static Thread BOT_THREAD = new Thread(SharkBotApplication::startBot, "Shark-Bot");
     public static Thread BACKEND_THREAD = new Thread(SharkBotApplication::startBackend, "Shark-Backend");
