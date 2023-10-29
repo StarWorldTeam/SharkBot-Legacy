@@ -1,3 +1,11 @@
+A note on infectivity:
+The LGPL is chosen specifically so that projects may depend on SharkBot
+features without being infected with its license. That is the
+purpose of the LGPL. Plugins and others using this code via ordinary
+Java mechanics for referencing libraries are specifically not bound by SharkBot's
+license for the Plugin code.
+
+
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
 
