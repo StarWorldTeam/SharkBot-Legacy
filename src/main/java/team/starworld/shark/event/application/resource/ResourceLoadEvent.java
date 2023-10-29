@@ -1,4 +1,4 @@
-package team.starworld.shark.event.application.resources;
+package team.starworld.shark.event.application.resource;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

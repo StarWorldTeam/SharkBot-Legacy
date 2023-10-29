@@ -12,8 +12,8 @@ import org.springframework.util.ResourceUtils;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.data.plugin.PluginLoader;
-import team.starworld.shark.event.application.resources.ResourceLoadEvent;
-import team.starworld.shark.event.application.resources.ResourceLoadFinishEvent;
+import team.starworld.shark.event.application.resource.ResourceLoadEvent;
+import team.starworld.shark.event.application.resource.AllResourceLoadedEvent;
 import team.starworld.shark.event.bus.EventBus;
 
 import java.net.URI;
@@ -68,7 +68,7 @@ public class ResourceLoader {
                 } catch (Throwable ignored) {}
             }
         } catch (Throwable ignored) {}
-        eventBus.emit(new ResourceLoadFinishEvent(this));
+        eventBus.emit(new AllResourceLoadedEvent(this));
     }
 
     public static List <String> splitPath (String path) {
