@@ -10,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Service;
 import team.starworld.shark.data.plugin.PluginLoader;
 import team.starworld.shark.data.resource.ResourceLoader;
-import team.starworld.shark.event.bus.EventBus;
 import team.starworld.shark.network.SharkClient;
 import team.starworld.shark.util.ConfigUtil;
 
@@ -36,9 +35,8 @@ public class SharkBotApplication {
 
     public static Config CONFIG;
     public static SharkClient SHARK_CLIENT;
-    public static PluginLoader CORE_PLUGIN_LOADER = new PluginLoader("corePlugins");
-    public static PluginLoader PLUGIN_LOADER = new PluginLoader("plugins");
-    public static ResourceLoader RESOURCE_LOADER = new ResourceLoader(new PluginLoader[] { CORE_PLUGIN_LOADER, PLUGIN_LOADER });
+    public static PluginLoader PLUGIN_LOADER = new PluginLoader();
+    public static ResourceLoader RESOURCE_LOADER = new ResourceLoader(new PluginLoader[] { PLUGIN_LOADER });
 
     public static Thread BOT_THREAD = new Thread(SharkBotApplication::startBot, "Shark-Bot");
     public static Thread BACKEND_THREAD = new Thread(SharkBotApplication::startBackend, "Shark-Backend");
@@ -48,20 +46,14 @@ public class SharkBotApplication {
         SpringApplication.run(SharkBotApplication.class, args);
         CONFIG = ConfigUtil.useConfig("shark", Config.class, Config::new);
         SHARK_CLIENT = new SharkClient(CONFIG.clientConfig);
-        EventBus.INSTANCES.forEach(
-            bus -> bus.all(
-                event -> SharkClient.LOGGER.info("[%s] [%s] %s".formatted(bus.getName(), event.getEventName(), event.getDisplayString()))
-            )
-        );
         BACKEND_THREAD.start();
         BOT_THREAD.start();
     }
 
     @SneakyThrows
     public static void startBot () {
-        CORE_PLUGIN_LOADER.load();
-        CORE_PLUGIN_LOADER.loadPlugins();
-        PLUGIN_LOADER.load();
+        PLUGIN_LOADER.load(PluginLoader.getPluginPath("corePlugins"));
+        PLUGIN_LOADER.load(PluginLoader.getPluginPath("plugins"));
         PLUGIN_LOADER.loadPlugins();
         RESOURCE_LOADER.load();
         SHARK_CLIENT.start(builder -> builder);

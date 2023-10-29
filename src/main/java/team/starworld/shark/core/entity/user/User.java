@@ -61,16 +61,16 @@ public class User {
         return new User(id).save();
     }
 
-    public net.dv8tion.jda.api.entities.User toDiscord () {
-        return SharkBotApplication.SHARK_CLIENT.getClient().getUserById(this.id);
-    }
-
     public static User of (net.dv8tion.jda.api.entities.User user) {
         return of(user.getId());
     }
 
     public static User of (Interaction interaction) {
         return of(interaction.getUser());
+    }
+
+    public net.dv8tion.jda.api.entities.User toDiscord () {
+        return SharkBotApplication.SHARK_CLIENT.getClient().getUserById(this.id);
     }
 
     @Getter

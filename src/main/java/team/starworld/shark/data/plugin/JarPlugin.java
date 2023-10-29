@@ -11,6 +11,7 @@ import team.starworld.shark.event.application.plugin.PluginLoadEvent;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Objects;
 import java.util.jar.JarFile;
 
 public class JarPlugin {
@@ -26,6 +27,7 @@ public class JarPlugin {
 
     public JarPlugin (File file, PluginLoader loader) {
         this.file = file;
+        this.pluginLoader = loader;
     }
 
     @SneakyThrows
@@ -33,6 +35,11 @@ public class JarPlugin {
         event.getEventBus().emit(event);
         if (event.isCancelled()) return;
         if (!ResourceLocation.isValidNamespace(this.getConfig().getId())) return;
+        for (var plugin : pluginLoader.getPlugins()) {
+            if (!plugin.loaded || plugin == this) continue;
+            if (Objects.equals(plugin.getConfig().getId(), this.getConfig().getId()))
+                throw new RuntimeException("Cannot load the same plugin: %s (%s, %s)".formatted(this.getConfig().getId(), this.getFile().getPath(), plugin.getFile().getPath()));
+        }
         setLoader(new URLClassLoader(new URL[] {getURL()}, SharkBotApplication.class.getClassLoader()));
         setMainClass(loader.loadClass(getConfig().getMainClassName()));
         if (mainClass.isAnnotationPresent(Plugin.class)) {
@@ -92,6 +99,10 @@ public class JarPlugin {
 
     public String getName () {
         return getConfig().getName();
+    }
+
+    public void setConfig (PluginLoader.PluginConfig config) {
+        if (this.config == null) this.config = config;
     }
 
     @SneakyThrows

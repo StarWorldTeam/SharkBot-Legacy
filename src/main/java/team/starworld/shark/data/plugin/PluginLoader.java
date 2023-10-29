@@ -12,6 +12,8 @@ import java.util.List;
 
 public class PluginLoader {
 
+    public final List <String> pluginTypes = new ArrayList <> ();
+
     @Data @Getter
     public static class PluginConfig {
 
@@ -28,24 +30,25 @@ public class PluginLoader {
     private final List <JarPlugin> plugins = new ArrayList <> ();
     public final EventBus eventBus = new EventBus ("EventBus@PluginLoader");
 
-    private final String path;
-
-    public PluginLoader (String path) {
-        this.path = path;
+    public PluginLoader () {
+        this.pluginTypes.add(".jar");
+        this.pluginTypes.add(".plugin");
     }
 
-    public Path getPluginPath () {
+    public static Path getPluginPath (String path) {
         return Path.of(
-            SharkBotApplication.getBaseDir().toString(), this.path
+            SharkBotApplication.getBaseDir().toString(),
+            path
         );
     }
 
-    public void load () {
-        if (!getPluginPath().toFile().exists()) getPluginPath().toFile().mkdirs();
-        var files = getPluginPath().toFile().listFiles();
+    public void load (Path path) {
+        if (!path.toFile().exists()) path.toFile().mkdirs();
+        var files = path.toFile().listFiles();
         if (files != null) for (var i : files) {
-            if (i.isFile() && i.getPath().endsWith(".jar"))
+            if (pluginTypes.stream().anyMatch(type -> i.isFile() && i.getPath().endsWith(type))) {
                 plugins.add(new JarPlugin(i, this));
+            }
         }
     }
 
