@@ -1,3 +1,4 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'java'
     id 'maven-publish'
@@ -45,9 +46,7 @@ dependencies {
 
 publishing {
     publications {
-        // noinspection GroovyAssignabilityCheck
-        maven(MavenPublication) {
-            // noinspection GroovyAssignabilityCheck
+        maven (MavenPublication) {
             from components.java
         }
     }
