@@ -14,7 +14,7 @@ public class Item implements ItemSupplier {
         return this;
     }
 
-    public static class Properties {}
+    public static class Properties { }
 
     private Properties properties;
 

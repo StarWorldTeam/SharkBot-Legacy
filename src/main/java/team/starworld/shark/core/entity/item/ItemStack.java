@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.starworld.shark.core.entity.user.User;
+import team.starworld.shark.core.registries.RegistryEntry;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.data.serialization.CompoundTag;
@@ -29,18 +30,30 @@ public class ItemStack implements ItemSupplier, TagSerializable {
         return new ItemStack((Item) null, 0);
     }
 
-    public ItemStack (@Nullable Item item) {
+    public ItemStack (@Nullable ItemSupplier item) {
         this(item, 1);
     }
 
-    public ItemStack (@Nullable Item item, int count) {
-        this(item, 1, new CompoundTag());
+    public ItemStack (@Nullable ItemSupplier item, int count) {
+        this(item, count, new CompoundTag());
     }
 
-    public ItemStack (@Nullable Item item, int count, CompoundTag tag) {
+    public ItemStack (@Nullable ItemSupplier item, int count, CompoundTag tag) {
         this.count = count;
-        this.item = SharkRegistries.ITEMS.containsValue(item) ? item : null;
+        this.item = item != null && SharkRegistries.ITEMS.containsValue(item.asItem()) ? item.asItem() : null;
         this.tag = tag;
+    }
+
+    public ItemStack (@Nullable RegistryEntry <? extends ItemSupplier> item) {
+        this(item, 1);
+    }
+
+    public ItemStack (@Nullable RegistryEntry <? extends ItemSupplier> item, int count) {
+        this(item, count, new CompoundTag());
+    }
+
+    public ItemStack (@Nullable RegistryEntry <? extends ItemSupplier> item, int count, CompoundTag tag) {
+        this(item != null ? item.get().asItem() : null, count, tag);
     }
 
     public ItemStack (@NotNull ResourceLocation item) {
@@ -48,7 +61,7 @@ public class ItemStack implements ItemSupplier, TagSerializable {
     }
 
     public ItemStack (@NotNull ResourceLocation item, int count) {
-        this(item, 1, new CompoundTag());
+        this(item, count, new CompoundTag());
     }
 
     public ItemStack (@NotNull ResourceLocation item, int count, CompoundTag tag) { this(SharkRegistries.ITEMS.get(item), count, tag); }
@@ -117,5 +130,11 @@ public class ItemStack implements ItemSupplier, TagSerializable {
     public boolean equals (Object obj) {
         return obj instanceof ItemStack stack && stack.save().hashCode() == save().hashCode();
     }
+
+    @Override
+    public String toString () {
+        return "%s [%sx] (%s) %s".formatted(getClass().getSimpleName(), getCount(), getId(), getTag());
+    }
+
 
 }

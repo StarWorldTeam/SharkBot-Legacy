@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.starworld.shark.core.entity.user.User;
+import team.starworld.shark.core.registries.RegistryEntry;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.data.serialization.CompoundTag;
@@ -34,18 +35,30 @@ public class FluidStack implements FluidSupplier, TagSerializable {
         return new FluidStack((Fluid) null, 0);
     }
 
-    public FluidStack (@Nullable Fluid fluid) {
+    public FluidStack (@Nullable FluidSupplier fluid) {
         this(fluid, 1);
     }
 
-    public FluidStack (@Nullable Fluid fluid, int count) {
-        this(fluid, 1, new CompoundTag());
+    public FluidStack (@Nullable FluidSupplier fluid, int count) {
+        this(fluid, count, new CompoundTag());
     }
 
-    public FluidStack (@Nullable Fluid fluid, int count, CompoundTag tag) {
+    public FluidStack (@Nullable FluidSupplier fluid, int count, CompoundTag tag) {
         this.count = count;
-        this.fluid = SharkRegistries.FLUIDS.containsValue(fluid) ? fluid : null;
+        this.fluid = fluid != null && SharkRegistries.FLUIDS.containsValue(fluid.asFluid()) ? fluid.asFluid() : null;
         this.tag = tag;
+    }
+
+    public FluidStack (@Nullable RegistryEntry <? extends FluidSupplier> fluid, int count, CompoundTag tag) {
+        this(fluid != null ? fluid.get(): null, count, tag);
+    }
+
+    public FluidStack (@Nullable RegistryEntry <? extends FluidSupplier> fluid) {
+        this(fluid, 1);
+    }
+
+    public FluidStack (@Nullable RegistryEntry <? extends FluidSupplier> fluid, int count) {
+        this(fluid, count, new CompoundTag());
     }
 
     public FluidStack (@NotNull ResourceLocation fluid) {
@@ -53,11 +66,10 @@ public class FluidStack implements FluidSupplier, TagSerializable {
     }
 
     public FluidStack (@NotNull ResourceLocation fluid, int count) {
-        this(fluid, 1, new CompoundTag());
+        this(fluid, count, new CompoundTag());
     }
 
     public FluidStack (@NotNull ResourceLocation fluid, int count, CompoundTag tag) { this(SharkRegistries.FLUIDS.get(fluid), count, tag); }
-
 
     @Override
     public Fluid asFluid () { return this.getFluid(); }
@@ -114,6 +126,11 @@ public class FluidStack implements FluidSupplier, TagSerializable {
 
     public FluidStackComponent getTooltip () {
         return getTooltip(null);
+    }
+
+    @Override
+    public String toString () {
+        return "%s [%smL] (%s) %s".formatted(getClass().getSimpleName(), getCount(), getId(), getTag());
     }
 
 }

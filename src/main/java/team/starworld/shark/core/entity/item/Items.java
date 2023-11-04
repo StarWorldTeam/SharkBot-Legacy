@@ -6,6 +6,6 @@ import team.starworld.shark.core.registries.SharkRegistries;
 
 public class Items {
 
-    public static final RegistryEntry <Item> AIR = SharkRegistries.ITEMS.register(ResourceLocation.of("air"), Item::new);
+    public static final RegistryEntry <Item> AIR = SharkRegistries.ITEMS.register(ResourceLocation.of("air"), MeasurableItem.Item::new);
 
 }
