@@ -69,10 +69,10 @@ public class ItemStack implements ItemSupplier, TagSerializable {
     public ResourceLocation getLocation () { return SharkRegistries.ITEMS.getKey(item); }
 
     public Item getItem () {
-        return this.item == null ? Items.AIR.get() : this.item;
+        return item == null ? Items.AIR.get() : item;
     }
 
-    public boolean isEmpty () { return this.count == 0 || getItem() == Items.AIR.get(); }
+    public boolean isEmpty () { return this.count <= 0 || getItem() == Items.AIR.get(); }
     public boolean isAir () { return getItem() == Items.AIR.get(); }
 
     @Override

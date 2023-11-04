@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Service;
+import team.starworld.shark.core.registries.Registries;
 import team.starworld.shark.data.plugin.PluginLoader;
 import team.starworld.shark.data.resource.ResourceLoader;
 import team.starworld.shark.network.SharkClient;
@@ -52,6 +53,7 @@ public class SharkBotApplication {
 
     @SneakyThrows
     public static void startBot () {
+        Registries.bootstrap();
         PLUGIN_LOADER.load(PluginLoader.getPluginPath("corePlugins"));
         PLUGIN_LOADER.load(PluginLoader.getPluginPath("plugins"));
         PLUGIN_LOADER.loadPlugins();

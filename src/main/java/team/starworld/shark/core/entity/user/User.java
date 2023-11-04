@@ -97,7 +97,11 @@ public class User {
     }
 
     public boolean hasPermission (ResourceLocation permission) {
-        return getTag().containsKey("permission") && getTag().getList("permission").contains(permission.toString());
+        return getTag().containsKey("permission") && getTag()
+            .getList("permission")
+            .stream().map(i -> ResourceLocation.of(String.valueOf(i)))
+            .toList()
+            .contains(permission);
     }
 
     public User addPermission (ResourceLocation permission) {

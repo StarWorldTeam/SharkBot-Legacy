@@ -97,7 +97,7 @@ public class FluidStack implements FluidSupplier, TagSerializable {
         this.tag.load(tag.saveAsMap());
     }
 
-    public boolean isEmpty () { return this.count == 0 || getFluid() == Fluids.AIR.get(); }
+    public boolean isEmpty () { return this.count <= 0 || getFluid() == Fluids.AIR.get(); }
     public boolean isAir () { return getFluid() == Fluids.AIR.get(); }
 
     @Override

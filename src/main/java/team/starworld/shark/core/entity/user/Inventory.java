@@ -82,6 +82,7 @@ public class Inventory implements TagSerializable {
     }
 
     public void give (ItemStack stack) {
+        if (stack.isEmpty()) return;
         for (var i : itemStackStored) {
             if (i.getId() == stack.getId() && i.getTag().equals(stack.getTag())) {
                 i.setCount(i.getCount() + stack.getCount());
@@ -92,6 +93,7 @@ public class Inventory implements TagSerializable {
         check();
     }
     public void give (FluidStack stack) {
+        if (stack.isEmpty()) return;
         for (var i : this.fluidStackStored) {
             if (i.getId() == stack.getId() && i.getTag().equals(stack.getTag())) {
                 i.setCount(i.getCount() + stack.getCount());

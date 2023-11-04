@@ -42,7 +42,7 @@ public class Registry <T> {
     @Getter
     private final TagManager <T> tags;
 
-    private final Map <ResourceLocation, T> map = new LinkedHashMap <> ();
+    private final Map <ResourceLocation, T> map = new HashMap <> ();
 
     private Registry (ResourceKey <T> key) {
         this.key = key;
