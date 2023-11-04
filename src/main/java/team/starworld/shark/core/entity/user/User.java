@@ -4,8 +4,10 @@ import lombok.Getter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.Interaction;
 import team.starworld.shark.SharkBotApplication;
+import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.data.resource.Locale;
 import team.starworld.shark.data.serialization.CompoundTag;
+import team.starworld.shark.data.serialization.ListTag;
 import team.starworld.shark.util.DataUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,5 +96,16 @@ public class User {
         return this;
     }
 
+    public boolean hasPermission (ResourceLocation permission) {
+        return getTag().containsKey("permission") && getTag().getList("permission").contains(permission.toString());
+    }
+
+    public User addPermission (ResourceLocation permission) {
+        modifyTag(
+            tag -> tag.putIfNull("permission", ListTag::new)
+                .getList("permission").put(permission.toString())
+        );
+        return this;
+    }
 
 }

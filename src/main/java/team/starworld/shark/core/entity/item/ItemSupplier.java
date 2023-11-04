@@ -1,4 +1,4 @@
-package team.starworld.shark.core.item;
+package team.starworld.shark.core.entity.item;
 
 public interface ItemSupplier {
 

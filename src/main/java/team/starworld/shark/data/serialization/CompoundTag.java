@@ -84,29 +84,29 @@ public class CompoundTag {
     }
 
 
-    public CompoundTag putLong (String name, long value) {
-        this.map.put(name, value);
+    public CompoundTag putLong (String name, Number value) {
+        this.map.put(name, value.intValue());
         return this;
     }
 
     public long getLong (String name) { return get(name) instanceof Long value ? value : Long.parseLong(get(name).toString()); }
 
-    public CompoundTag putInt (String name, int value) {
-        this.map.put(name, value);
+    public CompoundTag putInt (String name, Number value) {
+        this.map.put(name, value.intValue());
         return this;
     }
 
     public int getInt (String name) { return get(name) instanceof Integer value ? value : Integer.parseInt(get(name).toString()); }
 
-    public CompoundTag putFloat (String name, float value) {
-        this.map.put(name, value);
+    public CompoundTag putFloat (String name, Number value) {
+        this.map.put(name, value.floatValue());
         return this;
     }
 
     public float getFloat (String name) { return get(name) instanceof Float value ? value : Float.parseFloat(get(name).toString()); }
 
-    public CompoundTag putDouble (String name, Double value) {
-        this.map.put(name, value);
+    public CompoundTag putDouble (String name, Number value) {
+        this.map.put(name, value.doubleValue());
         return this;
     }
 
@@ -121,6 +121,11 @@ public class CompoundTag {
 
     public CompoundTag putBoolean (String name, boolean value) {
         this.map.put(name, value);
+        return this;
+    }
+
+    public CompoundTag putBoolean (String name, Number value) {
+        this.map.put(name, value.doubleValue() != 0);
         return this;
     }
 

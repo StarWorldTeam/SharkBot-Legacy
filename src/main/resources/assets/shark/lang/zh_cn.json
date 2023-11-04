@@ -1,6 +1,9 @@
 {
     "locale.discord.locale_tag": "zh-CN",
     "locale.name": "中文 (简体)",
+    "type.shark.item.name": "物品",
+    "type.shark.energy.name": "能量",
+    "type.shark.fluid.name": "流体",
     "network.command.shark.locale.name": "本地化语言",
     "network.command.shark.locale.description": "本地化语言选项",
     "network.command.shark.locale.option.locale.name": "语言名称",
@@ -8,5 +11,9 @@
     "network.command.shark.locale.option.list.name": "列出",
     "network.command.shark.locale.option.list.description": "列出所有语言",
     "network.command.shark.locale.reply": "成功切换到语言 [%1$s] %2$s！",
-    "network.command.shark.locale.reply.invalid": "无效语言，支持的语言有 [%s]。"
+    "network.command.shark.locale.reply.invalid": "无效语言，支持的语言有 [%s]。",
+    "network.command.shark.user-give.name": "用户-给予",
+    "network.command.shark.user-give.description": "增加用户库存内容",
+    "message.shark.general.permission_denied": "权限不足！",
+    "message.shark.general.need_option": "需要参数: %s！"
 }

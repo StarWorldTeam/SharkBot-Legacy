@@ -1,6 +1,5 @@
-package team.starworld.shark.core.item;
+package team.starworld.shark.core.entity.item;
 
-import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.core.registries.SharkRegistries;
@@ -17,16 +16,17 @@ public class Item implements ItemSupplier {
 
     public static class Properties {}
 
-    @Getter
-    private final Properties properties;
+    private Properties properties;
 
-    public Item (Properties properties) {
-        this.properties = properties;
+    public Properties getProperties () {
+        if (properties == null) properties = new Properties();
+        return properties;
     }
 
     public Component getName (ItemStack stack, @Nullable User user) {
         return Component.translatable(this.getTranslationId("name"));
     }
+
     public void appendToolTip (ItemStack stack, List <Component> tooltip, @Nullable User user) {}
 
 

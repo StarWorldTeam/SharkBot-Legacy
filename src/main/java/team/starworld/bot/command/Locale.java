@@ -1,4 +1,4 @@
-package team.starworld.bot.commands;
+package team.starworld.bot.command;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import team.starworld.shark.SharkBotApplication;
@@ -8,18 +8,12 @@ import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.util.Constants;
 
-import static j2html.TagCreator.*;
-
 @Command(name = "locale")
 public class Locale {
 
     public static void list (CommandInteractionEvent event) {
-        event.replyHTML(
-            html(
-                body(
-                    h1("Locales")
-                )
-            ).withStyle("width: 10rem;").attr("height", 100).attr("width", 100)
+        event.reply(
+            String.join(", ", SharkBotApplication.RESOURCE_LOADER.locales.values().stream().map(team.starworld.shark.data.resource.Locale::getName).toList())
         ).queue();
     }
 
@@ -27,7 +21,10 @@ public class Locale {
     public static void run (CommandInteractionEvent event) {
         var option = event.getInteraction().getOption("locale");
         var list = event.getInteraction().getOption("list");
-        if (list != null && list.getAsBoolean()) list(event);
+        if (list != null && list.getAsBoolean()) {
+            list(event);
+            return;
+        }
         if (option != null) {
             var optionString = option.getAsString().trim();
             if (!SharkBotApplication.RESOURCE_LOADER.locales.containsKey(optionString)) {

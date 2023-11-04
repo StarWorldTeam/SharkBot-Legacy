@@ -1,12 +1,19 @@
 {
     "locale.discord.locale_tag": "en-US",
     "locale.name": "English (US)",
+    "type.shark.item.name": "物品",
+    "type.shark.energy.name": "能量",
+    "type.shark.fluid.name": "流体",
     "network.command.shark.locale.name": "locale",
-    "network.command.shark.locale.description": "Localized Language Options",
+    "network.command.shark.locale.description": "Localized language options",
     "network.command.shark.locale.option.locale.name": "locale",
     "network.command.shark.locale.option.locale.description": "Locale Name",
     "network.command.shark.locale.option.list.name": "list",
     "network.command.shark.locale.option.list.description": "List all languages",
     "network.command.shark.locale.reply": "Successfully switched to language [%1$s] %2$s!",
-    "network.command.shark.locale.reply.invalid": "Invalid language, supported languages are [%s]."
+    "network.command.shark.locale.reply.invalid": "Invalid language, supported languages are [%s].",
+    "network.command.shark.user-give.name": "user-give",
+    "network.command.shark.user-give.description": "Give the user something",
+    "message.shark.general.permission_denied": "Permission denied!",
+    "message.shark.general.need_option": "Needed options: %s!"
 }

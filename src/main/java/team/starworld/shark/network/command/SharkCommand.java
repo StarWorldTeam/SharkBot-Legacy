@@ -1,6 +1,9 @@
 package team.starworld.shark.network.command;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.event.network.CommandInteractionEvent;
@@ -10,6 +13,9 @@ import java.util.Arrays;
 public class SharkCommand {
 
     private final Class <?> clazz;
+
+    @Getter @Setter
+    private CommandData data;
 
     public SharkCommand (Class <?> clazz) {
         this.clazz = clazz;
@@ -31,7 +37,7 @@ public class SharkCommand {
     }
 
     @SneakyThrows
-    public void handleBeforeRegister (CommandSetupEvent event) {
+    public void setup (CommandSetupEvent event) {
         for (var method : Arrays.stream(clazz.getDeclaredMethods()).filter(i -> i.isAnnotationPresent(Command.Setup.class)).toList()) {
             method.invoke(null, event);
         }

@@ -85,7 +85,7 @@ public class SharkClient {
             var data = Commands.slash(command.getName(), command.getDescription());
             var sharkEvent = new CommandSetupEvent(command, data);
             eventBus.emit(sharkEvent);
-            command.handleBeforeRegister(sharkEvent);
+            command.setup(sharkEvent);
             for (var discordLocale : DiscordLocale.values()) {
                 if (discordLocale == DiscordLocale.UNKNOWN) continue;
                 var locale = Locale.fromDiscord(discordLocale);
@@ -96,6 +96,7 @@ public class SharkClient {
                     option.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.description".formatted(command.getNamespace(), command.getName(), option.getName()), option.getDescription()));
                 }
             }
+            command.setData(data);
             discordCommands.add(data);
         }
         for (var command : discordCommands) {

@@ -1,20 +1,16 @@
-package team.starworld.shark.core.item;
+package team.starworld.shark.network.chat;
 
 import j2html.tags.DomContent;
 import lombok.Getter;
+import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.data.resource.Locale;
-import team.starworld.shark.network.chat.Component;
 
-public class ItemStackComponent extends Component {
-
-    @Getter
-    private final ItemStack stack;
+public abstract class TooltipComponent extends Component {
 
     @Getter
     private final Component baseComponent;
 
-    public ItemStackComponent (ItemStack stack, Component baseComponent) {
-        this.stack = stack;
+    public TooltipComponent (Component baseComponent) {
         this.baseComponent = baseComponent;
     }
 
@@ -42,5 +38,11 @@ public class ItemStackComponent extends Component {
     public String toString () {
         return baseComponent.toString();
     }
+
+    public abstract Component getTitle ();
+    public abstract Component getDescription ();
+
+    public Component getTitle (User user) { return getTitle(); }
+    public Component getDescription (User user) { return getDescription(); }
 
 }

@@ -5,13 +5,9 @@ import lombok.Getter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import team.starworld.shark.SharkBotApplication;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Locale {
-
     @Getter
     private final Map <String, String> language = new HashMap <> ();
 

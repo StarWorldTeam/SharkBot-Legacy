@@ -39,6 +39,20 @@ public class EventBus {
         return callback;
     }
 
+    public void remove (Class <? extends Event> type, EventCallback <?> callback) {
+        if (!listeners.containsKey(type)) return;
+        listeners.get(type).removeIf(i -> i == callback);
+    }
+
+    public void removeOnce (Class <? extends Event> type, EventCallback <?> callback) {
+        if (!onceListeners.containsKey(type)) return;
+        listeners.get(type).removeIf(i -> i == callback);
+    }
+
+    public void removeAll (EventCallback <?> callback) {
+        allListeners.removeIf(i -> i == callback);
+    }
+
     public <T extends Event> EventCallback <T> on (Class <T> type, Consumer <T> callback) {
         return on(type, ((event, ignored) -> callback.accept(event)));
     }

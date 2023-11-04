@@ -1,4 +1,4 @@
-package team.starworld.shark.core.item;
+package team.starworld.shark.core.entity.item;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import team.starworld.shark.network.chat.MultiComponent;
 
 import java.util.ArrayList;
 
-public class ItemStack implements ItemSupplier, TagSerializable <ItemStack> {
+public class ItemStack implements ItemSupplier, TagSerializable {
 
     @Getter @Setter
     private int count;
@@ -72,11 +72,10 @@ public class ItemStack implements ItemSupplier, TagSerializable <ItemStack> {
     }
 
     @Override
-    public ItemStack load (CompoundTag tag) {
+    public void load (CompoundTag tag) {
         setTag(tag.getCompound("tag"));
         setItem(SharkRegistries.ITEMS.get(ResourceLocation.of(tag.getString("id"))));
         setCount(tag.getInt("count"));
-        return this;
     }
 
     @Override
