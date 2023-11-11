@@ -64,9 +64,6 @@ public class SharkBotApplication {
     @SneakyThrows
     public static void startBot () {
         SharkRegistries.bootstrap();
-        SharkRegistries.ELEMENTS.entries().forEach(
-            i -> System.out.println(i.getKey() + ": " + i.getValue())
-        );
         PLUGIN_LOADER.load(PluginLoader.getPluginPath("corePlugins"));
         PLUGIN_LOADER.load(PluginLoader.getPluginPath("plugins"));
         PLUGIN_LOADER.loadPlugins();
