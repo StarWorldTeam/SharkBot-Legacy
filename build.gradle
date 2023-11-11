@@ -59,3 +59,7 @@ javadoc {
         encoding 'utf-8'
     }
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
