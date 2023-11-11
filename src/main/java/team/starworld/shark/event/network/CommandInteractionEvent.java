@@ -12,7 +12,11 @@ import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.network.command.SharkCommand;
+import team.starworld.shark.network.command.SharkOptionMapping;
 import team.starworld.shark.util.PlayWrightUtil;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInteractionEvent> {
 
@@ -128,5 +132,15 @@ public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInt
             new MessageCreateBuilder().setFiles(PlayWrightUtil.getDiscordImage(PlayWrightUtil.makeScreenShot(content.render())))
         );
     }
+
+    public SharkOptionMapping getOptionSafe (String name) {
+        return new SharkOptionMapping(Objects.requireNonNull(getInteraction().getOption(name)));
+    }
+
+    public Optional <SharkOptionMapping> getOption (String name) {
+        var option = getInteraction().getOption(name);
+        return option == null ? Optional.empty() : Optional.of(new SharkOptionMapping(option));
+    }
+
 
 }

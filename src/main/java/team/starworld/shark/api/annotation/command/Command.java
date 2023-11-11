@@ -1,7 +1,7 @@
 package team.starworld.shark.api.annotation.command;
 
 import team.starworld.shark.core.registries.ResourceLocation;
-import team.starworld.shark.util.Constants;
+import team.starworld.shark.util.ConstantUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,6 +23,6 @@ public @interface Command {
     String namespace () default ResourceLocation.DEFAULT_NAMESPACE;
 
     String name();
-    String description() default Constants.UNDEFINED;
+    String description() default ConstantUtil.UNDEFINED;
 
 }

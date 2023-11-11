@@ -79,7 +79,7 @@ public class User {
     private DataUtil.DataHolder <UserMeta> data;
 
     public Locale getLocale () {
-        return SharkBotApplication.RESOURCE_LOADER.locales.get(this.getData().get().getLocale());
+        return Locale.INSTANCES.get(this.getData().get().getLocale());
     }
 
     public User setLocale (DiscordLocale locale) {

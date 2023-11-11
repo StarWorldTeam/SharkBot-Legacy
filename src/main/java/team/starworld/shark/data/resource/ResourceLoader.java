@@ -1,7 +1,5 @@
 package team.starworld.shark.data.resource;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;
@@ -12,8 +10,8 @@ import org.springframework.util.ResourceUtils;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.data.plugin.PluginLoader;
-import team.starworld.shark.event.application.resource.ResourceLoadEvent;
 import team.starworld.shark.event.application.resource.AllResourceLoadedEvent;
+import team.starworld.shark.event.application.resource.ResourceLoadEvent;
 import team.starworld.shark.event.bus.EventBus;
 
 import java.net.URI;
@@ -22,9 +20,8 @@ import java.util.*;
 
 public class ResourceLoader {
 
-    public final EventBus eventBus = new EventBus("EventBus@ResourceLoader");
-
-    public Map <String, Locale> locales = new HashMap <> ();
+    @Getter
+    private final EventBus eventBus = new EventBus("EventBus@ResourceLoader");
 
     public static Path getResourcePackPath () {
         return Path.of(
@@ -43,11 +40,11 @@ public class ResourceLoader {
         this.pluginLoaders = pluginLoaders;
     }
 
-    public synchronized void load () {
-        try {
+    public synchronized void load (boolean sharkResource, boolean pluginResource, boolean fileResource) {
+        if (sharkResource) try {
             load("classpath:assets/*/*/**/*.*", "classpath:assets");
         } catch (Throwable ignored) {}
-        try {
+        if (pluginResource) try {
             for (var plugins : pluginLoaders) {
                 for (var plugin : plugins.getPlugins()) {
                     var baseDir = URI.create(getJarResource(plugin.getFile().getAbsolutePath(), "assets")).toString();
@@ -56,7 +53,7 @@ public class ResourceLoader {
                 }
             }
         } catch (Throwable ignored) {}
-        try {
+        if (fileResource) try {
             if (!getResourcePackPath().toFile().exists()) getResourcePackPath().toFile().mkdirs();
             for (var file : Objects.requireNonNull(getResourcePackPath().toFile().listFiles())) {
                 if (!file.isDirectory()) continue;
@@ -79,41 +76,54 @@ public class ResourceLoader {
         return splitPath(path.toString());
     }
 
+    /**
+     * @see UrlResource
+     * 加载URL资源
+     */
     @SneakyThrows
-    public void loadURLResource (UrlResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
-        var realPath = splitPath(resource.getURI().toString().substring(baseDir.length()));
+    public void loadURLResource (UrlResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String rawBaseDir) {
+        var realPath = splitPath(resource.getURI().toString().substring(rawBaseDir.length()));
         if (realPath.size() >= 2) {
-            var location = ResourceLocation.of(realPath.get(0), realPath.get(1));
+            var type = ResourceLocation.of(realPath.get(0), realPath.get(1));
             var resourcePath = realPath.subList(2, realPath.size());
             var resourceLocation = ResourceLocation.of(realPath.get(0), realPath.get(1) + "/" + String.join("/", resourcePath));
-            var split = Arrays.stream(baseDir.split("!/")).toList();
+            var splitRawBaseDir = Arrays.stream(rawBaseDir.split("!/")).toList();
+            var baseDir = String.join("!/", splitRawBaseDir.subList(1, splitRawBaseDir.size()));
             var sharkResource = new SharkResource(
-                location,
-                resource, String.join("!/", split.subList(1, split.size())), String.join("/", resourcePath), resourceLocation
+                type,
+                resource, baseDir, String.join("/", resourcePath), resourceLocation
             );
-            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
-            resourceMap.get(location).add(sharkResource);
+            if (!resourceMap.containsKey(type)) resourceMap.put(type, new ArrayList <> ());
+            resourceMap.get(type).add(sharkResource);
         }
     }
 
+    /**
+     * @see FileSystemResource
+     * 加载文件资源
+     */
     @SneakyThrows
     public void loadFileSystemResource (FileSystemResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
         var list = splitPath(resource.getPath());
         var baseDirPath = splitPath(ResourceUtils.getURL(baseDir).getPath());
         list = list.subList(baseDirPath.size(), list.size());
         if (list.size() >= 2) {
-            var location = ResourceLocation.of(list.get(0), list.get(1));
+            var type = ResourceLocation.of(list.get(0), list.get(1));
             var resourcePath = String.join("/", list.subList(2, list.size()));
             var sharkResource = new SharkResource(
-                location,
+                type,
                 resource, String.join("/", baseDirPath), resourcePath,
-                ResourceLocation.of(location.getNamespace(), String.join("/", splitPath(location.getPath() + "/" + resourcePath)))
+                ResourceLocation.of(type.getNamespace(), String.join("/", splitPath(type.getPath() + "/" + resourcePath)))
             );
-            if (!resourceMap.containsKey(location)) resourceMap.put(location, new ArrayList <> ());
-            resourceMap.get(location).add(sharkResource);
+            if (!resourceMap.containsKey(type)) resourceMap.put(type, new ArrayList <> ());
+            resourceMap.get(type).add(sharkResource);
         }
     }
 
+    /**
+     * @see ClassPathResource
+     * 加载类内部资源
+     */
     @SneakyThrows
     public void loadClassPathResource (ClassPathResource resource, Map <ResourceLocation, List <SharkResource>> resourceMap, String baseDir) {
         var baseDirFiles = Arrays.stream(new PathMatchingResourcePatternResolver().getResources("%s".formatted(baseDir))).toList();
@@ -147,17 +157,7 @@ public class ResourceLoader {
 
     @SneakyThrows
     public void loadResource (ResourceLocation location, List <SharkResource> resources) {
-        if (Objects.equals(location.getPath(), "lang")) {
-            var mapper = new ObjectMapper();
-            for (var resource : resources) {
-                if (!Objects.requireNonNull(resource.getResource().getFilename()).endsWith(".json")) continue;
-                var name = Arrays.stream(resource.getResource().getFilename().split("\\.")).toList().get(0);
-                var value = mapper.readValue(resource.getResource().getInputStream(), new TypeReference <Map <String, String>> () {});
-                if (!locales.containsKey(name)) locales.put(name, new Locale());
-                value.forEach(locales.get(name)::put);
-            }
-        }
-        eventBus.emit(new ResourceLoadEvent(location, resources, this));
+        this.getEventBus().emit(new ResourceLoadEvent(location, resources, this));
     }
 
 }

@@ -8,15 +8,18 @@ import team.starworld.shark.SharkBotApplication;
 import java.util.*;
 
 public class Locale {
+
+    public static final Map <String, Locale> INSTANCES = new HashMap <> ();
+
     @Getter
     private final Map <String, String> language = new HashMap <> ();
 
     public static Locale getByName (String name) {
-        return SharkBotApplication.RESOURCE_LOADER.locales.getOrDefault(name, getDefault());
+        return INSTANCES.getOrDefault(name, getDefault());
     }
 
     public static Locale getDefault () {
-        return SharkBotApplication.RESOURCE_LOADER.locales.get(SharkBotApplication.CONFIG.getDefaultLanguage());
+        return INSTANCES.get(SharkBotApplication.CONFIG.getDefaultLanguage());
     }
 
     public String getLocalizedName () {
@@ -24,7 +27,7 @@ public class Locale {
     }
 
     public String getName () {
-        return SharkBotApplication.RESOURCE_LOADER.locales
+        return INSTANCES
             .entrySet()
             .stream()
             .filter(i -> i.getValue() == this)
@@ -33,7 +36,7 @@ public class Locale {
     }
 
     public static Locale fromDiscord (DiscordLocale locale) {
-        for (var lang : SharkBotApplication.RESOURCE_LOADER.locales.values()) {
+        for (var lang : INSTANCES.values()) {
             if (Objects.equals(lang.getOrDefault("locale.discord.locale_tag", "unknown"), locale.getLocale()))
                 return lang;
         }

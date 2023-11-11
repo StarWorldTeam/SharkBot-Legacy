@@ -2,12 +2,13 @@ package team.starworld.shark.core.entity.fluid;
 
 import org.jetbrains.annotations.Nullable;
 import team.starworld.shark.core.entity.user.User;
+import team.starworld.shark.core.registries.Registrable;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.network.chat.Component;
 
 import java.util.List;
 
-public class Fluid implements FluidSupplier {
+public class Fluid implements FluidSupplier, Registrable {
 
     public Fluid () {}
 

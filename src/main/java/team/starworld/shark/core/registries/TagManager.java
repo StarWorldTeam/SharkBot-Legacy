@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.util.*;
 
-public class TagManager <T> {
+public class TagManager <T extends Registrable> {
 
     @Getter
     private final Registry <T> registry;

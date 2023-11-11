@@ -5,13 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.undercouch.bson4jackson.BsonFactory;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class CompoundTag {
 
-    private LinkedHashMap <String, Object> map = new LinkedHashMap <> ();
+    private Map <String, Object> map = new HashMap <> ();
+
+    @SneakyThrows
+    public CompoundTag parse (String text) {
+        load(CompoundTagParser.parse(text).saveAsMap());
+        return this;
+    }
+
+    public String stringify () {
+        return CompoundTagParser.stringify(this);
+    }
 
     @Override
     public boolean equals (Object obj) {
@@ -23,8 +34,8 @@ public class CompoundTag {
         return Arrays.hashCode(this.save());
     }
 
-    public LinkedHashMap <String, Object> saveAsMap () {
-        var map = new LinkedHashMap <String, Object> ();
+    public HashMap <String, Object> saveAsMap () {
+        var map = new HashMap <String, Object> ();
         for (var i : this.map.entrySet()) {
             var name = i.getKey();
             var value = i.getValue();
@@ -70,8 +81,8 @@ public class CompoundTag {
         return this;
     }
 
-    public CompoundTag put (String name, Object value) {
-        map.put(name, value);
+    public CompoundTag put (String name, @Nullable Object value) {
+        if (value != null) map.put(name, value);
         return this;
     }
 
@@ -112,6 +123,14 @@ public class CompoundTag {
 
     public double getDouble (String name) { return get(name) instanceof Double value ? value : Double.parseDouble(get(name).toString()); }
 
+    public CompoundTag putShort (String name, Number value) {
+        this.map.put(name, value.shortValue());
+        return this;
+    }
+
+    public double getShort (String name) { return get(name) instanceof Short value ? value : Short.parseShort(get(name).toString()); }
+
+
     public CompoundTag putString (String name, String value) {
         this.map.put(name, value);
         return this;
@@ -140,30 +159,24 @@ public class CompoundTag {
         return this;
     }
 
+    public CompoundTag putList (String name, Iterable <?> value) {
+        var tag = new ListTag();
+        value.forEach(tag::add);
+        putList(name, tag);
+        return this;
+    }
+
     public ListTag getList (String name) {
         return (ListTag) get(name);
     }
 
     public Set <Map.Entry <String, Object>> entrySet () {
-        this.map.forEach(
-            (key, value) -> {
-                if (value == null) this.map.remove(key);
-            }
-        );
         return Set.copyOf(this.map.keySet().stream().map(key -> Map.entry(key, get(key))).toList());
     }
 
     @Override
     public String toString () {
-        return "{%s}".formatted(
-            String.join(
-                ", ",
-                entrySet()
-                .stream()
-                .map(i -> "%s=%s".formatted(i.getKey(), i.getValue()))
-                .toList()
-            )
-        );
+        return stringify();
     }
 
     public CompoundTag remove (String name) {

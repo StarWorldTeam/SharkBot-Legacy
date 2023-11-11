@@ -43,6 +43,7 @@ dependencies {
     implementation 'de.undercouch:bson4jackson:2.15.0'
     implementation 'org.apache.httpcomponents:fluent-hc:4.5.14'
     implementation 'net.jodah:typetools:0.6.3'
+    implementation 'com.google.guava:guava:32.1.3-jre'
 }
 
 publishing {
@@ -50,5 +51,11 @@ publishing {
         maven (MavenPublication) {
             from components.java
         }
+    }
+}
+
+javadoc {
+    options {
+        encoding 'utf-8'
     }
 }

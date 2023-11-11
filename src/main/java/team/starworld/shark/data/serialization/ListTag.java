@@ -75,12 +75,7 @@ public class ListTag extends ArrayList <Object> {
 
     @Override
     public String toString () {
-        return "[%s]".formatted(
-            String.join(
-                ", ",
-                toList().stream().map(String::valueOf).toList()
-            )
-        );
+        return CompoundTagParser.stringify(this);
     }
 
     @Override

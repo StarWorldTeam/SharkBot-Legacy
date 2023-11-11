@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Registry <T> {
+public class Registry <T extends Registrable> {
 
     @RequiredArgsConstructor
     public static class Entry <T> implements RegistryEntry <T> {
@@ -31,7 +31,7 @@ public class Registry <T> {
     private static final Map <ResourceKey <?>, Registry <?>> INSTANCES = new HashMap <> ();
 
     @SuppressWarnings("unchecked")
-    public static <T, E> Registry <T> create (ResourceKey <T> key) {
+    public static <T extends Registrable, E> Registry <T> create (ResourceKey <T> key) {
         if (!INSTANCES.containsKey(key)) INSTANCES.put(key, new Registry <> (key));
         return (Registry <T>) INSTANCES.get(key);
     }

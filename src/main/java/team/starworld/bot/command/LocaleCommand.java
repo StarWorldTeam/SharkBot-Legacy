@@ -1,19 +1,20 @@
 package team.starworld.bot.command;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.api.annotation.command.Command;
 import team.starworld.shark.event.network.CommandInteractionEvent;
 import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.network.chat.Component;
-import team.starworld.shark.util.Constants;
+import team.starworld.shark.util.ConstantUtil;
+import team.starworld.shark.data.resource.Locale;
+import static team.starworld.shark.data.resource.Locale.INSTANCES;
 
 @Command(name = "locale")
-public class Locale {
+public class LocaleCommand {
 
     public static void list (CommandInteractionEvent event) {
         event.reply(
-            String.join(", ", SharkBotApplication.RESOURCE_LOADER.locales.values().stream().map(team.starworld.shark.data.resource.Locale::getName).toList())
+            String.join(", ", INSTANCES.values().stream().map(Locale::getName).toList())
         ).queue();
     }
 
@@ -27,16 +28,16 @@ public class Locale {
         }
         if (option != null) {
             var optionString = option.getAsString().trim();
-            if (!SharkBotApplication.RESOURCE_LOADER.locales.containsKey(optionString)) {
+            if (!INSTANCES.containsKey(optionString)) {
                 event.reply(
                     Component.translatable(
                         "network.command.shark.locale.reply.invalid",
-                        String.join(", ", SharkBotApplication.RESOURCE_LOADER.locales.keySet())
+                        String.join(", ", INSTANCES.keySet())
                     )
                 ).queue();
                 return;
             }
-            var locale = SharkBotApplication.RESOURCE_LOADER.locales.get(optionString);
+            var locale = INSTANCES.get(optionString);
             event.getUser().setLocale(locale);
             event.reply(Component.translatable("network.command.shark.locale.reply", locale.getName(), locale.getLocalizedName())).queue();
         } else {
@@ -47,9 +48,9 @@ public class Locale {
 
     @Command.Setup
     public static void setup (CommandSetupEvent event) {
-        event.getCommandData().addOption(OptionType.BOOLEAN, "list", Constants.UNDEFINED, false, false);
+        event.getCommandData().addOption(OptionType.BOOLEAN, "list", ConstantUtil.UNDEFINED, false, false);
         event.getCommandData()
-            .addOption(OptionType.STRING, "locale", Constants.UNDEFINED, false, false);
+            .addOption(OptionType.STRING, "locale", ConstantUtil.UNDEFINED, false, false);
     }
 
 }

@@ -8,7 +8,7 @@ import team.starworld.shark.event.bus.EventCallback;
 import team.starworld.shark.event.network.CommandAutoCompleteEvent;
 import team.starworld.shark.network.command.SharkCommand;
 import team.starworld.shark.event.Event;
-import team.starworld.shark.util.Constants;
+import team.starworld.shark.util.ConstantUtil;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -21,7 +21,7 @@ public class CommandSetupEvent extends Event {
     private final @Event.Property SlashCommandData commandData;
 
     public CommandSetupEvent addOption (OptionType type, String name) {
-        return addOption(type, name, Constants.UNDEFINED);
+        return addOption(type, name, ConstantUtil.UNDEFINED);
     }
 
     public CommandSetupEvent addOption (OptionType type, String name, String description) {
