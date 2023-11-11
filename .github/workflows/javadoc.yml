@@ -33,7 +33,7 @@ jobs:
         env:
           REPO: self
           BRANCH: javadoc
-          FOLDER: ./build/docs/javadoc
+          FOLDER: build/docs/javadoc
           CLEAR_GLOBS_FILE: "./.github/workflows/.clear-target-files"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
