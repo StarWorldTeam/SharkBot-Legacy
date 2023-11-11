@@ -35,7 +35,7 @@ jobs:
           BRANCH: javadoc
           FOLDER: ./build/docs/javadoc
           CLEAR_GLOBS_FILE: "./.github/workflows/.clear-target-files"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
