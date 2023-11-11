@@ -26,14 +26,14 @@ jobs:
       - name: Build
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          arguments: build
+          arguments: javadoc
 
       - name: Publish
         uses: s0/git-publish-subdir-action@master
         env:
           REPO: self
           BRANCH: javadoc
-          FOLDER: ../build/docs/javadoc
+          FOLDER: ./build/docs/javadoc
           CLEAR_GLOBS_FILE: "./.github/workflows/.clear-target-files"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
