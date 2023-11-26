@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.core.registries.RegistryEntry;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.data.serialization.CompoundTag;
 import team.starworld.shark.data.serialization.TagSerializable;
+import team.starworld.shark.event.data.entity.FluidEvent;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.network.chat.MultiComponent;
 
@@ -111,7 +113,10 @@ public class FluidStack implements FluidSupplier, TagSerializable {
     }
 
     public FluidStackComponent getName (@Nullable User user) {
-        return new FluidStackComponent(this, getFluid().getName(this, user));
+        var event = new FluidEvent.GetNameEvent(this, user);
+        event.setName(getFluid().getName(this, user));
+        SharkBotApplication.EVENT_BUS.emit(event);
+        return new FluidStackComponent(this, event.getName());
     }
 
     public FluidStackComponent getName () {
@@ -120,7 +125,9 @@ public class FluidStack implements FluidSupplier, TagSerializable {
 
     public FluidStackComponent getTooltip (@Nullable User user) {
         var components = new ArrayList <Component> ();
+        var event = new FluidEvent.AppendTooltipEvent(components, this, user);
         getFluid().appendToolTip(this, components, user);
+        SharkBotApplication.EVENT_BUS.emit(event);
         return new FluidStackComponent(this, new MultiComponent(components.toArray(new Component[] {})));
     }
 

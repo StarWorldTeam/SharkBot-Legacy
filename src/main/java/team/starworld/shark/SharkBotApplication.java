@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Service;
+import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.data.plugin.PluginLoader;
 import team.starworld.shark.data.resource.Locale;
@@ -55,7 +56,7 @@ public class SharkBotApplication {
     @SneakyThrows
     public static void main (String[] args) {
         SpringApplication.run(SharkBotApplication.class, args);
-        CONFIG = ConfigUtil.useConfig("shark", Config.class, Config::new);
+        CONFIG = ConfigUtil.useConfig(ResourceLocation.of("config"), Config.class, Config::new);
         SHARK_CLIENT = new SharkClient(CONFIG.clientConfig);
         BACKEND_THREAD.start();
         BOT_THREAD.start();

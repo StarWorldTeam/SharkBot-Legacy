@@ -48,4 +48,5 @@ public class Element implements Registrable {
     public String toString () {
         return "Element [%s] (%s)".formatted(getSymbol(), getLocation());
     }
+
 }

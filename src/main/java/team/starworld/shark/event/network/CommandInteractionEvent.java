@@ -1,11 +1,13 @@
 package team.starworld.shark.event.network;
 
 import j2html.tags.DomContent;
+import lombok.SneakyThrows;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.entity.user.User;
@@ -17,6 +19,8 @@ import team.starworld.shark.util.PlayWrightUtil;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInteractionEvent> {
 
@@ -39,6 +43,14 @@ public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInt
     public ReplyCallbackAction reply (Component component) {
         return reply(
             component.getString(User.of(interaction).getLocale())
+        );
+    }
+
+    @SneakyThrows
+    public void replyAsync (Supplier <MessageEditData> queue) {
+        interaction.deferReply().setContent("...").queueAfter(
+            100, TimeUnit.MILLISECONDS,
+            success -> success.editOriginal(queue.get()).queue()
         );
     }
 
@@ -83,12 +95,12 @@ public class CommandInteractionEvent extends DiscordInteraction <SlashCommandInt
     }
 
     public ReplyCallbackAction replyPermissionDenied () {
-        return reply(Component.translatable("message.shark.general.permission_denied"));
+        return reply(Component.translatable("message.shark.general.permissionDenied"));
     }
 
     public ReplyCallbackAction replyNeedOption (String option) {
         var command = getCommand();
-        return reply(Component.translatable("message.shark.general.need_option", getUser().getLocale().getOrDefault("network.command.%s.%s.option.%s.name".formatted(command.getNamespace(), command.getName(), option), option)));
+        return reply(Component.translatable("message.shark.general.needOption", getUser().getLocale().getOrDefault("network.command.%s.%s.option.%s.name".formatted(command.getNamespace(), command.getName(), option), option)));
     }
 
     public void needOptions (String... options) {

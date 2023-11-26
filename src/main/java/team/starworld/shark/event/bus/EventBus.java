@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * 事件总线
+ */
 public class EventBus {
 
     public static final List <EventBus> INSTANCES = new ArrayList <> ();
@@ -19,6 +22,9 @@ public class EventBus {
     private final @Getter Map <Class <?>, List <EventCallback <?>>> onceListeners = new HashMap <> ();
     private final @Getter List <EventCallback <?>> allListeners = new ArrayList <> ();
 
+    /**
+     * 事件总线名称
+     */
     @Getter @Setter
     private String name = "EventBus";
 
@@ -31,6 +37,10 @@ public class EventBus {
         this.name = name;
     }
 
+    /**
+     * 用于监听某事件
+     * @param type 事件类型
+     */
     @SuppressWarnings("DuplicatedCode")
     @SneakyThrows
     public <T extends Event> EventCallback <T> on (Class <T> type, EventCallback <T> callback) {
@@ -39,24 +49,44 @@ public class EventBus {
         return callback;
     }
 
+    /**
+     * 用于移除某事件监听器
+     * @param type 事件类型
+     */
     public void remove (Class <? extends Event> type, EventCallback <?> callback) {
         if (!listeners.containsKey(type)) return;
         listeners.get(type).removeIf(i -> i == callback);
     }
 
+    /**
+     * 用于移除某事件监听器
+     * @param type 事件类型
+     */
     public void removeOnce (Class <? extends Event> type, EventCallback <?> callback) {
         if (!onceListeners.containsKey(type)) return;
         listeners.get(type).removeIf(i -> i == callback);
     }
 
+    /**
+     * 用于移除某事件监听器
+     */
     public void removeAll (EventCallback <?> callback) {
         allListeners.removeIf(i -> i == callback);
     }
 
+    /**
+     * 用于监听某事件
+     * @param type 事件类型
+     */
     public <T extends Event> EventCallback <T> on (Class <T> type, Consumer <T> callback) {
         return on(type, ((event, ignored) -> callback.accept(event)));
     }
 
+    /**
+     *
+     * 用于监听某事件（仅执行一次）
+     * @param type 事件类型
+     */
     @SuppressWarnings("DuplicatedCode")
     @SneakyThrows
     public <T extends Event> EventCallback <T> once (Class <T> type, EventCallback <T> callback) {
@@ -65,19 +95,33 @@ public class EventBus {
         return callback;
     }
 
+    /**
+     * 用于监听某事件（仅执行一次）
+     * @param type 事件类型
+     */
     public <T extends Event> EventCallback <T> once (Class <T> type, Consumer <T> callback) {
         return once(type, (event, ignored) -> callback.accept(event));
     }
 
+    /**
+     * 用于监听所有事件
+     */
     public EventCallback <? extends Event> all (EventCallback <? extends Event> callback) {
         this.allListeners.add(callback);
         return callback;
     }
 
+    /**
+     * 用于监听所有事件
+     */
     public EventCallback <? extends Event> all (Consumer <Event> callback) {
         return all((event, ignored) -> callback.accept(event));
     }
 
+    /**
+     * 用于提交事件
+     * @param event 事件对象
+     */
     @SuppressWarnings("unchecked")
     @SneakyThrows
     public <T extends Event> void emit (T event) {

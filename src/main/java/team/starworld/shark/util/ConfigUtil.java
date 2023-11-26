@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.SneakyThrows;
 import team.starworld.shark.SharkBotApplication;
+import team.starworld.shark.core.registries.ResourceLocation;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -21,8 +22,13 @@ public class ConfigUtil {
     @SneakyThrows
     public static File getConfigFile (String name) {
         var path = getConfigPath().toFile();
-        path.mkdirs();
+        path.getParentFile().mkdirs();
         return Path.of(path.getPath(), name + ".yml").toFile();
+    }
+
+    @SneakyThrows
+    public static <T> T useConfig (ResourceLocation location, Class <T> clazz, Supplier <T> defaultValue) {
+        return useConfig("%s/%s".formatted(location.getNamespace(), location.getPath()), clazz, defaultValue);
     }
 
     @SneakyThrows
@@ -30,6 +36,7 @@ public class ConfigUtil {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         var file = getConfigFile(name);
         if (!file.exists()) {
+            file.getParentFile().mkdirs();
             file.createNewFile();
             mapper.writeValue(file, defaultValue.get());
         }

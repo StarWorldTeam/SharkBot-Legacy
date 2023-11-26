@@ -26,6 +26,10 @@ public class CompoundTagParser {
         return stringBuilder.toString();
     }
 
+    /**
+     * 将数据文本化
+     * @see CompoundTagParser
+     */
     @SneakyThrows
     public static String stringify (String string) {
         return new ObjectMapper().writeValueAsString(string);
@@ -267,6 +271,13 @@ public class CompoundTagParser {
 
     }
 
+    /**
+     * 解析数据标签<br/><br/>
+     * 格式: <code>{compoundTag: { booleanTrue: 1b, booleanFalse: 0b, string: "HelloWorld", simpleString: string }, listTag: [0: 1b], integer: 1I, long: 1L, float: 1F, double: 1D, short: 1S, booleanTrue: true, booleanFalse: false}</code><br/><br/>
+     * 数字标识（B=Boolean, F=Float, D=Double, L=Long, S=Short, I=Integer）可忽略大小写，如 <code>1b</code> = <code>1B</doe3>
+     * @param text 源文本
+     * @return 解析后的数据标签
+     */
     public static CompoundTag parse (String text) {
         return new CompoundTagParser(new Tokenizer(text).tokenize()).parse();
     }

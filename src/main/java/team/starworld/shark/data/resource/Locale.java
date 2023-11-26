@@ -37,7 +37,7 @@ public class Locale {
 
     public static Locale fromDiscord (DiscordLocale locale) {
         for (var lang : INSTANCES.values()) {
-            if (Objects.equals(lang.getOrDefault("locale.discord.locale_tag", "unknown"), locale.getLocale()))
+            if (Objects.equals(lang.getOrDefault("locale.discord.localeTag", "unknown"), locale.getLocale()))
                 return lang;
         }
         return getDefault();

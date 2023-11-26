@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.starworld.shark.SharkBotApplication;
 import team.starworld.shark.core.entity.user.User;
 import team.starworld.shark.core.registries.RegistryEntry;
 import team.starworld.shark.core.registries.ResourceLocation;
 import team.starworld.shark.core.registries.SharkRegistries;
 import team.starworld.shark.data.serialization.CompoundTag;
 import team.starworld.shark.data.serialization.TagSerializable;
+import team.starworld.shark.event.data.entity.ItemEvent;
 import team.starworld.shark.network.chat.Component;
 import team.starworld.shark.network.chat.MultiComponent;
 
@@ -104,7 +106,10 @@ public class ItemStack implements ItemSupplier, TagSerializable {
     }
 
     public ItemStackComponent getName (@Nullable User user) {
-        return new ItemStackComponent(this, getItem().getName(this, user));
+        var event = new ItemEvent.GetNameEvent(this, user);
+        event.setName(getItem().getName(this, user));
+        SharkBotApplication.EVENT_BUS.emit(event);
+        return new ItemStackComponent(this, event.getName());
     }
 
     public ItemStackComponent getName () {
@@ -113,7 +118,9 @@ public class ItemStack implements ItemSupplier, TagSerializable {
 
     public ItemStackComponent getTooltip (@Nullable User user) {
         var components = new ArrayList <Component> ();
+        var event = new ItemEvent.AppendTooltipEvent(components, this, user);
         getItem().appendToolTip(this, components, user);
+        SharkBotApplication.EVENT_BUS.emit(event);
         return new ItemStackComponent(this, new MultiComponent(components.toArray(new Component[] {})));
     }
 

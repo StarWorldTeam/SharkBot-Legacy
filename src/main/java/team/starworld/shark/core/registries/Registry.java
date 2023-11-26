@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class Registry <T extends Registrable> {
 
     @RequiredArgsConstructor
-    public static class Entry <T> implements RegistryEntry <T> {
+    public static class Entry <T extends Registrable> implements RegistryEntry <T> {
 
         private final ResourceLocation location;
         private final T value;

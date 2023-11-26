@@ -1,6 +1,9 @@
 {
-    "locale.discord.locale_tag": "zh-CN",
+    "locale.discord.localeTag": "zh-CN",
     "locale.name": "中文 (简体)",
+    "general.shark.undefined": "未定义",
+    "general.shark.undefined.name": "无名称",
+    "general.shark.undefined.description": "无介绍",
     "type.shark.item.name": "物品",
     "type.shark.energy.name": "能量",
     "type.shark.fluid.name": "流体",
@@ -12,8 +15,15 @@
     "network.command.shark.locale.option.list.description": "列出所有语言",
     "network.command.shark.locale.reply": "成功切换到语言 [%1$s] %2$s！",
     "network.command.shark.locale.reply.invalid": "无效语言，支持的语言有 [%s]。",
-    "network.command.shark.user-give.name": "用户-给予",
+    "network.command.shark.user.name": "用户",
+    "network.command.shark.user.subName.give": "给予",
+    "network.command.shark.user.subName.inventory": "物品栏",
     "network.command.shark.user-give.description": "增加用户库存内容",
-    "message.shark.general.permission_denied": "权限不足！",
-    "message.shark.general.need_option": "需要参数: %s！"
+    "network.command.shark.user-give.option.type.name": "类型",
+    "network.command.shark.user-give.option.user.name": "用户",
+    "network.command.shark.user-give.option.amount.name": "数量",
+    "network.command.shark.user-give.option.id.name": "标识符",
+    "network.command.shark.user-give.option.tag.name": "标签",
+    "message.shark.general.permissionDenied": "权限不足！",
+    "message.shark.general.needOption": "需要参数: %s！"
 }

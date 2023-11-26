@@ -25,10 +25,12 @@ import team.starworld.shark.event.network.CommandListUpdateEvent;
 import team.starworld.shark.event.network.data.CommandSetupEvent;
 import team.starworld.shark.network.command.SharkCommand;
 import team.starworld.shark.util.AnnotationUtil;
+import team.starworld.shark.util.ConstantUtil;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -78,22 +80,36 @@ public class SharkClient {
 
     public void addCommands (CommandListUpdateAction action) {
         var event = new CommandListUpdateEvent();
-        commands.addAll(AnnotationUtil.getInstances(Command.class).stream().map(SharkCommand::new).toList());
+        commands.addAll(AnnotationUtil.getInstances(Command.class).stream().map(i -> new SharkCommand(i, this)).toList());
         eventBus.emit(event);
         var discordCommands = new ArrayList <> (event.getCommands());
         for (var command : commands) {
-            var data = Commands.slash(command.getName(), command.getDescription());
+            var commandSubName = command.hasSubName() ? "-" + String.join(
+                "-", command.getSubName()
+            ) : "";
+            var data = Commands.slash(command.getName() + commandSubName, command.getDescription());
             var sharkEvent = new CommandSetupEvent(command, data);
             eventBus.emit(sharkEvent);
             command.setup(sharkEvent);
             for (var discordLocale : DiscordLocale.values()) {
                 if (discordLocale == DiscordLocale.UNKNOWN) continue;
                 var locale = Locale.fromDiscord(discordLocale);
-                data.setNameLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.name".formatted(command.getNamespace(), command.getName()), command.getName()));
-                data.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.description".formatted(command.getNamespace(), command.getName()), command.getDescription()));
+                var localizedCommandSubName = command.hasSubName() ? "-" + String.join(
+                    "-",
+                    Arrays.stream(command.getSubName()).toList().stream()
+                        .map(name -> locale.getOrDefault("network.command.%s.%s.subName.%s".formatted(command.getNamespace(), command.getName(), name), name))
+                        .toList()
+                ) : "";
+
+                data.setNameLocalization(
+                    discordLocale,
+                    locale.getOrDefault("network.command.%s.%s.name".formatted(command.getNamespace(), command.getName()), command.getName())
+                        + localizedCommandSubName
+                );
+                data.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.description".formatted(command.getNamespace(), command.getName() + commandSubName), command.getDescription().equals(ConstantUtil.UNDEFINED) ? ConstantUtil.COMPONENT_UNDEFINED_DESCRIPTION.getString(locale) : command.getDescription()));
                 for (var option : data.getOptions()) {
-                    option.setNameLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.name".formatted(command.getNamespace(), command.getName(), option.getName()), option.getName()));
-                    option.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.description".formatted(command.getNamespace(), command.getName(), option.getName()), option.getDescription()));
+                    option.setNameLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.name".formatted(command.getNamespace(), command.getName() + commandSubName, option.getName()), option.getName()));
+                    option.setDescriptionLocalization(discordLocale, locale.getOrDefault("network.command.%s.%s.option.%s.description".formatted(command.getNamespace(), command.getName() + commandSubName, option.getName()), option.getDescription().equals(ConstantUtil.UNDEFINED) ? ConstantUtil.COMPONENT_UNDEFINED_DESCRIPTION.getString(locale): option.getDescription()));
                 }
             }
             command.setData(data);
@@ -132,7 +148,7 @@ public class SharkClient {
         public void onSlashCommandInteraction (@NotNull SlashCommandInteractionEvent event) {
             var sharkEvent = new CommandInteractionEvent(event);
             for (var command : client.commands) {
-                if (Objects.equals(command.getName(), event.getName())) {
+                if (Objects.equals(command.getFullName(), event.getName())) {
                     command.run(sharkEvent);
                 }
             }

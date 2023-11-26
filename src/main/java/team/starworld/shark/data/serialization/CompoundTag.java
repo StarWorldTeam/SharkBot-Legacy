@@ -10,10 +10,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
+/**
+ *  数据标签
+ */
 public class CompoundTag {
 
     private Map <String, Object> map = new HashMap <> ();
 
+    /**
+     * 从字符串解析
+     * @see CompoundTagParser
+     */
     @SneakyThrows
     public CompoundTag parse (String text) {
         load(CompoundTagParser.parse(text).saveAsMap());

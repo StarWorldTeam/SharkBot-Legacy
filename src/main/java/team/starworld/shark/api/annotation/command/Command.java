@@ -25,4 +25,6 @@ public @interface Command {
     String name();
     String description() default ConstantUtil.UNDEFINED;
 
+    String[] subName() default {};
+
 }
